@@ -2,21 +2,63 @@
 
 # PlatformIO
 
+- [PlatformIO](#platformio)
+  - [Présentation](#présentation)
+  - [PlatformIO IDE](#platformio-ide)
+    - [Installation](#installation)
+    - [Créer un projet](#créer-un-projet)
+    - [Bibliothèques](#bibliothèques)
+  - [PlatformIO CLI](#platformio-cli)
+    - [Usage](#usage)
+    - [Créer un nouveau projet](#créer-un-nouveau-projet)
+    - [Fabriquer un projet (_build_)](#fabriquer-un-projet-build)
+    - [Programmer le système embarqué (_upload_)](#programmer-le-système-embarqué-upload)
+    - [Nettoyer un projet](#nettoyer-un-projet)
+    - [Monitorer](#monitorer)
+    - [Les bibliothèques](#les-bibliothèques)
+  - [Exemple : ESP32](#exemple--esp32)
+    - [Module testé : ESP32 AZ-Delivery Dev Kit C (NODEMCU)](#module-testé--esp32-az-delivery-dev-kit-c-nodemcu)
+    - [Détection](#détection)
+    - [platformio.ini](#platformioini)
+      - [Carte (_board_)](#carte-board)
+      - [Plateforme (_platform_)](#plateforme-platform)
+      - [Framework](#framework)
+        - [Framework Arduino](#framework-arduino)
+        - [Framework espidf](#framework-espidf)
+    - [Débugueur](#débugueur)
+  - [Tests unitaires (Unity)](#tests-unitaires-unity)
+  - [Test distant](#test-distant)
+  - [Intégration continue (GitHub Actions)](#intégration-continue-github-actions)
+  - [Auteurs](#auteurs)
+
+---
+
 ## Présentation
 
 [**PlatformIO**](https://platformio.org/) est un écosystème _open source_ dédié au développement IoT qui va faciliter le développement embarqué professionnel.
 
+> [!NOTE]
 > En juin 20204, il prend en charge plus de 1500 cartes de développement des principaux micro-contrôleurs (Atmel, ESP8266 et ESP32, STM32, etc ...), 40 plateformes et plus de 20 _frameworks_ regroupant plus de 130000 bibliothèques.
 
 ![](https://cdn.platformio.org/images/platformio-logo.17fdc3bc.png)
 
 Site : [platformio.org](https://platformio.org/)
 
+Documentations :
+
+- https://docs.platformio.org/en/latest/
+- https://docs.platformio.org/en/latest/what-is-platformio.html
+
 ## PlatformIO IDE
 
 [__PlatformIO IDE__](https://platformio.org/platformio-ide) est l'environnement de développement C/C++ pour les systèmes embarqués supportés. Il est multi-plateformes (Windows, Mac et GNU/Linux) et il fournit une [extension](https://platformio.org/install/ide?install=vscode) à [VSCode](https://code.visualstudio.com/).
 
-### Installation sous Debian/Ubuntu
+> [!NOTE]
+> [VSCode](https://code.visualstudio.com/) (ou [Visual Studio Code](https://code.visualstudio.com/)) est un éditeur de code source extensible et disponible pour Windows, macOS et Linux.
+
+Documentation : https://docs.platformio.org/en/latest/integration/ide/vscode.html#quick-start
+
+### Installation
 
 Liens :
 
@@ -24,7 +66,7 @@ Liens :
 * [Installing VSCode on Linux](https://code.visualstudio.com/docs/setup/linux)
 * [Installing PlatformIO IDE for VSCode](https://platformio.org/install/ide?install=vscode)
 
-Étapes :
+Étapes sous Debian/Ubuntu :
 
 - Installer VSCode
 
@@ -75,7 +117,7 @@ On accède à la fabrication (_build_), au téléversage (_upload_) et au monite
 
 ![monitor](images/platformio-monitor.png)
 
-### Projet
+### Créer un projet
 
 On commence par créer un nouveau projet :
 
@@ -83,13 +125,14 @@ On commence par créer un nouveau projet :
 
 On donne un nom au projet et on choisit sa carte (ici une carte __ESP32 LoRa de chez Heltec__) :
 
-![](images/platformio-project-wizard.png)
+![wizard](images/platformio-project-wizard.png)
 
+> [!NOTE]
 > En fonction de la carte choisie, il peut y avoir plusieurs plateformes de développement.
 
 Exemple d'architecture d'un projet PlaformIO :
 
-![](images/platformio-architecture-projet.png)
+![arborescence](images/platformio-architecture-projet.png)
 
 Le code source de l'application se situe dans le dossier `src` avec le fichier `main.cpp` (par défaut pour un _framework_ Arduino)  :
 
@@ -105,7 +148,8 @@ void loop() {
 }
 ```
 
-Il est possible d'ajouter ses fichiers d'en-tête (_header_) `.h` dans le dossier `include` et ses propres bibliothèques dans le dossier `lib`.
+> [!TIP]
+> Il est possible d'ajouter ses fichiers d'en-tête (_header_) `.h` dans le dossier `include` et ses propres bibliothèques dans le dossier `lib`.
 
 Le fichier `platformio.ini` contient la configuration du projet :
 
@@ -119,12 +163,14 @@ lib_deps =
   ESP8266_SSD1306
   Adafruit Unified Sensor
   DHT sensor library
-upload_port = /dev/ttyUSB0
-upload_speed = 115200
+;upload_port = /dev/ttyUSB0
+;upload_speed = 115200
+;monitor_port = /dev/ttyUSB0
 ;monitor_speed = 115200
 ```
 
-Les options du fichier `platformio.ini` sont décrites dans la [documentation](https://docs.platformio.org/en/latest/projectconf.html).
+> [!IMPORTANT]
+> Les options du fichier `platformio.ini` sont décrites dans la [documentation](https://docs.platformio.org/en/latest/projectconf.html).
 
 ### Bibliothèques
 
@@ -132,15 +178,18 @@ Pour ajouter des bibliothèques de la communauté au projet, il suffit d'ajouter
 
 PlatformIO fournit un outil de recherche de bibliothèques bien pratique :
 
-![](images/platformio-search.png)
+![search](images/platformio-search.png)
 
 On choisit sa bibliothèque et on accède à l'ensemble de ces informations :
 
-![](images/platformio-dht.png)
+![dht](images/platformio-dht.png)
 
+> [!TIP]
 > Il est aussi possible d'indiquer la version de la bibliothèque désirée en respectant les règles syntaxique définies [ici](https://docs.platformio.org/en/latest/userguide/lib/cmd_install.html#description).
 
 ## PlatformIO CLI
+
+### Usage
 
 PlatformIO fournit l'utilitaire `platformio` (ou son alias `pio`) pour programmer des systèmes embarqués (Arduino UNO, ESP32, etc.).
 
@@ -155,11 +204,136 @@ PlatformIO Core, version 6.1.4
 
 $ platformio --help
 $ pio --help
+Usage: platformio [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --version          Show the version and exit.
+  -f, --force        DEPRECATE
+  -c, --caller TEXT  Caller ID (service)
+  --no-ansi          Do not print ANSI control characters
+  -h, --help         Show this message and exit.
+
+Commands:
+  account   Manage PIO Account
+  boards    Embedded Board Explorer
+  check     Run a static analysis tool on code
+  ci        Continuous Integration
+  debug     PIO Unified Debugger
+  device    Monitor device or list existing
+  home      PIO Home
+  lib       Library Manager
+  platform  Platform Manager
+  project   Project Manager
+  remote    PIO Remote
+  run       Process project environments
+  settings  Manage PlatformIO settings
+  test      Unit Testing
+  update    Update installed platforms, packages and libraries
+  upgrade   Upgrade PlatformIO to the latest version
 ```
 
-> `pio` est un alias de la commande `platformio`.
+> Pour y accéder à partir d'un terminal, on peut ajouter ces lignes à la fin du fichier `~/.bashrc` :
+> ```sh
+> # plaformio
+> export PLATFORMIO_INSTALL="$HOME/.platformio"
+> export PATH=$PLATFORMIO_INSTALL/penv/bin:$PLATFORMIO_INSTALL/packages/tool-esptoolpy/:$PATH
+> ```
 
-### Projet
+Les paramètres de PlatformIO :
+
+```sh
+$ platformio settings get
+Name                          Current value [Default]                 Description
+----------------------------  --------------------------------------  --------------------------------------------------------------------
+check_platformio_interval     7                                       Check for the new PlatformIO Core interval (days)
+check_prune_system_threshold  1024                                    Check for pruning unnecessary data threshold (megabytes)
+enable_cache                  Yes                                     Enable caching for HTTP API requests
+enable_proxy_strict_ssl       Yes                                     Verify the proxy server certificate against the list of supplied CAs
+enable_telemetry              Yes                                     Telemetry service <https://bit.ly/pio-telemetry> (Yes/No)
+force_verbose                 No                                      Force verbose output when processing environments
+projects_dir                  ~/Documents/PlatformIO/Projects  Default location for PlatformIO projects (PlatformIO Home)
+
+************************************************************************************************************************************************************
+We found 261.77MB of unnecessary PlatformIO system data (temporary files, unnecessary packages, etc.).
+Use `pio system prune --dry-run` to list them or `pio system prune` to save disk space.
+```
+
+> Guide : https://docs.platformio.org/en/stable/core/userguide/index.html
+
+Par exemple, pour rechercher une carte **stm32** :
+
+```sh
+$ pio boards stm32
+...
+
+Platform: ststm32
+=================================================================================================
+ID                         MCU             Frequency    Flash     RAM       Name
+-------------------------  --------------  -----------  --------  --------  ----------------------
+...
+disco_l475vg_iot01a        STM32L475VGT6   80MHz        1MB       128KB     ST DISCO-L475VG-IOT01A
+...
+nucleo_f401re              STM32F401RET6   84MHz        512KB     96KB      ST Nucleo F401RE
+...
+
+$ pio boards disco_l475vg_iot01a
+
+Platform: ststm32
+======================================================================================
+ID                   MCU            Frequency    Flash    RAM    Name
+-------------------  -------------  -----------  -------  -----  ----------------------
+disco_l475vg_iot01a  STM32L475VGT6  80MHz        1MB      128KB  ST DISCO-L475VG-IOT01A
+```
+
+L'arborescence de PlatformIO est la suivante :
+
+```sh
+$ ls -l $HOME/.platformio/
+-rw-rw-r--  1 tv tv  177 juin  10 06:02 appstate.json
+-rw-rw-r--  1 tv tv 2178 juin  16 07:25 homestate.json
+drwxrwxr-x 15 tv tv 4096 juin  16 07:24 packages
+drwxrwxr-x  5 tv tv 4096 mars  30 22:16 penv
+drwxrwxr-x  5 tv tv 4096 sept.  3  2023 platforms
+```
+
+L'utilitaire `platformio` (et `pio`) se trouve dans le dossier `$HOME/.platformio/penv/bin/`.
+
+Et on retrouve l'ensemble des outils dans le dossier `packages`.
+
+```sh
+$ ls -l $HOME/.platformio/packages/
+drwx------ 4 tv tv 4096 mai   23  2023 contrib-piohome
+drwx------ 8 tv tv 4096 avril 11  2023 framework-arduino-avr
+drwx------ 6 tv tv 4096 mars  25  2023 framework-arduinoespressif32
+drwx------ 2 tv tv 4096 mai   23  2023 tool-avrdude
+drwx------ 8 tv tv 4096 avril 11  2023 toolchain-atmelavr
+drwx------ 7 tv tv 4096 juin  16 07:24 toolchain-riscv32-esp
+drwx------ 7 tv tv 4096 mars  25  2023 toolchain-xtensa-esp32
+drwx------ 7 tv tv 4096 juin  16 07:24 toolchain-xtensa-esp32s3
+drwx------ 7 tv tv 4096 mars  25  2023 tool-esptoolpy
+drwx------ 2 tv tv 4096 mars  25  2023 tool-mkfatfs
+drwx------ 2 tv tv 4096 mars  25  2023 tool-mklittlefs
+drwx------ 2 tv tv 4096 mars  25  2023 tool-mkspiffs
+drwx------ 3 tv tv 4096 mars  30 22:16 tool-scons
+```
+
+Ici, on peut y trouver :
+
+* des outils pour _flasher_ des cartes Atmel SAM et ST (STM32) avec [OpenOCD](http://openocd.org/), des cartes à base d'ESP avec [esptool](https://github.com/espressif/esptool) ou encore des cartes Arduino avec [avrdude](https://www.nongnu.org/avrdude/) ...
+
+* des chaînes développement pour processeur ARM avec [gccarmnoneeabi](https://launchpad.net/gcc-arm-embedded), Atmel avec [atmelavr](https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers), ESP32 [xtensa32](https://github.com/espressif/esp-idf) et ESP8266 avec [xtensa](https://github.com/jcmvbkbc/gcc-xtensa) ...
+
+* des _frameworks_ Arduino, mbed, espressif, ...
+
+```sh
+$ ls -l $HOME/.platformio/platforms/
+drwx------ 6 tv tv 4096 janv. 11 11:50 atmelavr
+drwx------ 7 tv tv 4096 mars  26 10:54 espressif32
+drwx------ 7 tv tv 4096 mars  27 18:05 espressif8266
+drwx------ 9 tv tv 4096 avril  1 06:38 ststm32
+```
+
+### Créer un nouveau projet
 
 - Créer un répertoire pour le projet
 
@@ -230,6 +404,7 @@ $ pio run -t upload -v
 
 Les fichiers générés pendant la fabrication sont stockés dans un répertoire `.pio`.
 
+> [!IMPORTANT]
 > ⚠️ Ces fichiers ne doivent jamais être conservés dans un dépôt `git`.
 
 ### Nettoyer un projet
@@ -242,20 +417,79 @@ $ pio run --target clean
 
 ### Monitorer
 
+Les options disponibles sont :
+
 ```sh
-$ platformio device list
 $ platformio device monitor --help
+Usage: platformio device monitor [OPTIONS]
+
+Options:
+  -p, --port TEXT       Port, a number or a device name
+  -b, --baud INTEGER    Set baud rate, default=9600
+  --parity [N|E|O|S|M]  Set parity, default=N
+  --rtscts              Enable RTS/CTS flow control, default=Off
+  --xonxoff             Enable software flow control, default=Off
+  --rts [0|1]           Set initial RTS line state, default=0
+  --dtr [0|1]           Set initial DTR line state, default=0
+  --echo                Enable local echo, default=Off
+  --encoding TEXT       Set the encoding for the serial port (e.g. hexlify,
+                        Latin1, UTF-8), default: UTF-8
+  -f, --filter TEXT     Add filters / text transformation
+  --eol [CR|LF|CRLF]    End of line mode, default=CRLF
+  --raw                 Do not apply any encodings/transformations
+  --exit-char INTEGER   ASCII code of special character that is used to exit
+                        the application, default=29 (DEC)
+  --menu-char INTEGER   ASCII code of special character that is used to
+                        control miniterm (menu), default=20 (DEC)
+  --quiet               Diagnostics: suppress non-error messages, default=Off
+  -h, --help            Show this message and exit.
 ```
 
-Des informations spécifiques peuvent être conservées dans le fichier du projet `platformio.ini` :
+Liste des ports disponibles :
+
+```sh
+$ platformio device list
+...
+/dev/ttyACM0
+------------
+Hardware ID: USB VID:PID=0483:374B SER=0672FF555051897267243807 LOCATION=1-4.4.2:1.2
+Description: STM32 STLink - ST-Link VCP Ctrl
+```
+
+Liens :
+
+* [platformio device monitor](https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html)
+* ["platformio.ini" (Project Configuration File)](https://docs.platformio.org/en/latest/projectconf/index.html#projectconf)
+
+Les options peuvent être placées directement dans le fichier `plaftform.ini`, par exemple :
 
 ```ini
-[env:uno]
-platform = atmelavr
-board = uno
-framework = arduino
-
+...
+upload_port = /dev/ttyUSB0
+upload_speed = 115200
+monitor_port = /dev/ttyUSB0
 monitor_speed = 115200
+monitor_filters = colorize, debug
+monitor_flags =
+    --encoding
+    hexlify
+```
+
+Exemple :
+
+```sh
+$ platformio device monitor -p /dev/ttyACM0
+--- Available filters and text transformations: colorize, debug, default, direct, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at http://bit.ly/pio-monitor-filters
+--- Miniterm on /dev/ttyACM0  9600,8,N,1 ---
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
+Start STM32L475
+
+$ platformio device monitor -p /dev/ttyACM0 --encoding hexlify
+...
+--- Miniterm on /dev/ttyACM0  9600,8,N,1 ---
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
+53 74 61 72 74 20 53 54 4D 33 32 4C 34 37 35 0A
 ```
 
 ### Les bibliothèques
@@ -306,66 +540,892 @@ $ pio pkg install xxx
 Des informations spécifiques sur les bibliothèques peuvent être conservées avec `lib_deps` dans le fichier du projet `platformio.ini` :
 
 ```ini
-[env:uno]
-platform = atmelavr
-board = uno
-framework = arduino
-
+...
 lib_deps =
   fastled/FastLED @ ^3.4.0
 ```
 
-> Il est possible de créer ses propres bibliothèques à l’intérieur du projet dans le dossier `lib`. Le principe est de créer un sous-répertoire qui porte le même nom que le nom des fichiers sources (`.h` et `.cpp`). Il est aussi possible de placer des fichiers d’entête (`.h`) dans le dossier `include` du projet.
+> [!NOTE]
+> Il est possible de créer ses propres bibliothèques à l’intérieur du projet dans le dossier `lib`. Le principe est de créer un sous-répertoire qui porte le même nom que le nom des fichiers sources (`.h` et `.cpp`).
+>
+> Il est aussi possible de placer des fichiers d’entête (`.h`) dans le dossier `include` du projet. Il ne faut pas oublier d'indiquer le répertoire qui contient des fichiers d'entêtes dans le fichier `plaformio.ini` :
+>
+> ```ini
+> ...
+> build_flags = -I./include
+> ```
 
-## Moniteur
+Il est aussi poussible de distribuer des bibliothèques pour les partager avec la communauté.
 
-Les options disponibles sont :
+Il faut deux conditions pour enregistrer sa bibliothèque dans [PlatformIO](https://platformio.org/lib) :
+
+* compléter et fournir un fichier `library.json` (ou `library.properties` ou `module.json`)
+* partager publiquement son code (git, svn, mercurial, ou http)
 
 ```sh
-$ platformio device monitor --help
-Usage: platformio device monitor [OPTIONS]
-
-Options:
-  -p, --port TEXT       Port, a number or a device name
-  -b, --baud INTEGER    Set baud rate, default=9600
-  --parity [N|E|O|S|M]  Set parity, default=N
-  --rtscts              Enable RTS/CTS flow control, default=Off
-  --xonxoff             Enable software flow control, default=Off
-  --rts [0|1]           Set initial RTS line state, default=0
-  --dtr [0|1]           Set initial DTR line state, default=0
-  --echo                Enable local echo, default=Off
-  --encoding TEXT       Set the encoding for the serial port (e.g. hexlify,
-                        Latin1, UTF-8), default: UTF-8
-  -f, --filter TEXT     Add filters / text transformation
-  --eol [CR|LF|CRLF]    End of line mode, default=CRLF
-  --raw                 Do not apply any encodings/transformations
-  --exit-char INTEGER   ASCII code of special character that is used to exit
-                        the application, default=29 (DEC)
-  --menu-char INTEGER   ASCII code of special character that is used to
-                        control miniterm (menu), default=20 (DEC)
-  --quiet               Diagnostics: suppress non-error messages, default=Off
-  -h, --help            Show this message and exit.
+$ platformio lib register https://os.mbed.com/users/tvaira/code/DISCO_L475VG_IOT01_HTS221//raw-file/576400702b64/library.json
+The library has been successfully registered and is waiting for moderation
 ```
 
-Liens :
+## Exemple : ESP32
 
-* [platformio device monitor](https://docs.platformio.org/en/latest/core/userguide/device/cmd_monitor.html)
-* ["platformio.ini" (Project Configuration File)](https://docs.platformio.org/en/latest/projectconf/index.html#projectconf)
+### Module testé : ESP32 AZ-Delivery Dev Kit C (NODEMCU)
 
-Les options peuvent être placées directement dans le fichier `plaftform.ini`, par exemple :
+Module testé : https://www.az-delivery.de/fr/products/esp32-developmentboard
+
+L'[AZ-Delivery Dev Kit C](https://www.az-delivery.de/fr/products/esp32-developmentboard) (ESP32 NODEMCU) a été conçu par [Espressif](https://www.espressif.com/) pour programmer le microcontrôleur [ESP32](https://www.espressif.com/en/products/socs/esp32).
+
+![esp32-nodemcu-wroom](images/esp32-nodemcu-wroom.png)
+
+L'ESP32 utilisé possède une unité centrale composée de 2 cœurs Tensilica LX6 32 bits à 240 MHz.
+
+Quelques caractéristiques :
+
+|||
+|---|---|
+|RAM|512 kB (520 kB pour l'ESP32-D0WDQ6)|
+|Mémoire flash externe|4 MB|
+|GPIOs|34|
+|Interfaces|SPI, I2C, I2S, CAN, UART|
+|WiFi|802.11 b/g/n, 802.11n (2.4 GHz) up to 150 Mbps|
+|Bluetooth|V4.2 - BLE et Bluetooth classique|
+|Antenne sans fil|PCB|
+|Pont USB/UART|CP2102|
+
+![](images/esp32-functional-block-diagram.png)
+
+### Détection
+
+```bash
+$ sudo dmesg
+...
+[1973869.449241] usb 1-2: New USB device found, idVendor=10c4, idProduct=ea60, bcdDevice= 1.00
+[1973869.449245] usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[1973869.449247] usb 1-2: Product: CP2102 USB to UART Bridge Controller
+[1973869.449249] usb 1-2: Manufacturer: Silicon Labs
+[1973869.449250] usb 1-2: SerialNumber: 0001
+[1973869.458370] cp210x 1-2:1.0: cp210x converter detected
+[1973869.459262] usb 1-2: cp210x converter now attached to ttyUSB0
+```
+
+> L'ESP32 s'interface via un pont USB/UART [CP2102](https://www.silabs.com/interface/usb-bridges/classic/device.cp2102?tab=specs)
+
+```bash
+$ esptool.py --port /dev/ttyUSB0 --chip esp32 flash_id
+esptool.py v4.5
+Serial port /dev/ttyUSB0
+Connecting.....
+Chip is ESP32-D0WDQ6 (revision v1.0)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: 24:62:ab:f2:5a:18
+Uploading stub...
+Running stub...
+Stub running...
+Manufacturer: 68
+Device: 4016
+Detected flash size: 4MB
+Hard resetting via RTS pin...
+```
+
+> Datasheets : [esp32_datasheet_en.pdf](https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf) et [esp32-wroom-32_datasheet_en.pdf](https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf)
+
+Nomenclature ESP32-D0WDQ6
+
+- `D` : _Dual core_
+- `0` : _No in-package flash_
+- `WD` : _Wi-Fi b/g/n + Bluetooth/Bluetooth LE dual mode_
+- `Q6` : _Package QFN 6*6_
+
+### platformio.ini
+
+[platformio.ini](https://docs.platformio.org/en/latest/projectconf/index.html) est le fichier de configuration d'un projet PlatformIO.
+
+> [!NOTE]
+> Un [fichier INI](https://fr.wikipedia.org/wiki/Fichier_INI) est un **fichier de configuration** dans un format de données introduit par les systèmes d’exploitation Windows en 1985. Par convention les noms de ces fichiers portent l’extension `.ini`.
+> 
+> Les fichiers INI sont des **fichiers texte** : ils peuvent donc être manipulés avec un éditeur de texte (`vim`, `emacs`, etc.). Les fichiers sont divisés en **sections**. Chaque section comporte un certain nombre de **paramètres de configuration**. Chaque section commence par un titre placé entre crochets `[` et `]`.
+> 
+> La valeur de chaque paramètre de configuration est indiquée par une formule : `paramètre = valeur`. Les fichiers peuvent contenir des **commentaires**. Les commentaires sont souvent utilisés pour décrire les paramètres et les valeurs à introduire. Ils sont précédés d’un point-virgule `;` ou plus rarement d’un dièse `#`.
+
+Le fichier [platformio.ini](https://docs.platformio.org/en/latest/projectconf/index.html) peut contenir plusieurs sections :
+
+- La section `[platformio]` permet de modifier les valeurs par défaut de PlatformIO (notamment des chemins).
+- La section `[common]` permet de regrouper des paramétres communs au projet.
+- La (ou les) section(s) `[env]` permet de déclarer un environnement de configuration définissant les tâches pour la construction, la programmation, le débogage, les tests unitaires, la surveillance des périphériques, les dépendances de bibliothèque, etc.
+
+> Chaque projet peut avoir plusieurs environnements de configuration. Dans ce cas, on doit lui donner un **nom** (`[env:nom]`). Le nom peut être alors utilisé en option `-e` (ou `--environment`) des commandes `pio` de PlatformIO. Le nom peut aussi être récupéré dans la variable `$PIOENV`.
+
+Exemple de fichier [platformio.ini](https://docs.platformio.org/en/latest/projectconf/index.html) :
 
 ```ini
+[platformio]
+default_envs = lolin32
+
+; paramétres communs au projet
+[common]
+build_flags = -DDEBUG
+
+; paramétres globaux à tous les environnements
+[env]
+platform = espressif8266
+framework = arduino
+board = lolin32
 ...
-upload_port = /dev/ttyUSB0
-upload_speed = 115200
-monitor_speed = 115200
-monitor_filters = colorize, debug
-monitor_flags =
-    --encoding
-    hexlify
 ```
 
-## GitHub Actions
+Un environnement (`[env]`) est défini par au moins trois paramètres :
+
+- la plateforme (_platform_) qui permet l'intégration des cartes spécifiques d'un fabricant (kits de développement, MCU), de _frameworks_ et de SDK.
+- la carte (_board_) qui dispose de paramètres préconfigurés pour les tâches de fabrication, programmation, débogage, etc.
+- le _framework_
+
+#### Carte (_board_)
+
+Recherche des cartes ESP32 :
+
+```bash
+$ pio boards esp32
+
+Platform: espressif32
+===============================================================================================================================================================================================
+ID                                   MCU      Frequency    Flash    RAM     Name
+-----------------------------------  -------  -----------  -------  ------  ---------------------------------------------------
+...
+esp32dev                             ESP32    240MHz       4MB      320KB   Espressif ESP32 Dev Module
+...
+nodemcu-32s                          ESP32    240MHz       4MB      320KB   NodeMCU-32S
+...
+lolin32                              ESP32    240MHz       4MB      320KB   WEMOS LOLIN32
+...
+```
+
+> PlatformIO prend en charge plus de [1500 cartes](https://docs.platformio.org/en/latest/boards/index.html#boards).
+
+Sachant que ce module d'[AZ-Delivery](https://www.az-delivery.de/fr/) ne possède pas de définition dans PlatormIO, on va choisir l'ID [lolin32](https://docs.platformio.org/en/latest/boards/espressif32/lolin32.html) que l'on déclare dans `platformio.ini` de la manière suivante :
+
+```ini
+[env]
+platform = espressif32
+board = lolin32
+```
+
+#### Plateforme (_platform_)
+
+Dans PlatformIO, une plateforme (_platform_) de développement est une architecture particulière de microcontrôleur sur laquelle les projets peuvent être compilés pour s'exécuter.
+
+Pour chaque plateforme de développement, PlatformIO définit :
+
+- les scripts de construction pour les frameworks et SDK pris en charge
+- des préréglages
+- les chaînes d'outils pour la ou les architectures
+
+Chaque projet doit spécifier le **nom** de la plateforme à l'aide de l'option `platform` dans le fichier de configuration du projet `platformio.ini`.
+
+Pour les micro-contrôleurs ESP32, la plateforme est `espressif32`.
+
+```ini
+[env]
+platform = espressif32
+...
+```
+
+Lien : https://docs.platformio.org/en/latest/platforms/espressif32.html#platform-espressif32
+
+> PlatformIO prend en charge plus de [40 plateformes](https://registry.platformio.org/search?t=platform) dont `espressif32`, `espressif8266`, `atmelavr`, `ststm32` etc.
+
+#### Framework
+
+La plateforme [espressif32](https://docs.platformio.org/en/latest/platforms/espressif32.html#platform-espressif32) supporte deux _frameworks_ :
+
+- [arduino](https://docs.platformio.org/en/latest/frameworks/arduino.html) : un portage du _framework_ [Arduino pour ESP32](https://github.com/espressif/arduino-esp32)
+- [espidf](https://docs.platformio.org/en/latest/frameworks/espidf.html#framework-espidf) : le _framework_ officiel d'[Espressif](https://github.com/espressif/esp-idf)
+
+##### Framework Arduino
+
+On crée un nouveau projet pour ce module :
+
+```bash
+$ pio project init --board lolin32 --project-option="framework=arduino"
+The following files/directories have been created in ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/arduino-esp32
+include - Put project header files here
+lib - Put project specific (private) libraries here
+src - Put project source files here
+platformio.ini - Project Configuration File
+Resolving lolin32 dependencies...
+Already up-to-date.
+Project has been successfully initialized!
+
+$ ls -l
+drwxrwxr-x 2 tv tv 4096 juil.  3 08:50 include
+drwxrwxr-x 2 tv tv 4096 juil.  3 08:50 lib
+-rw-rw-r-- 1 tv tv  438 juil.  3 08:50 platformio.ini
+drwxrwxr-x 2 tv tv 4096 juil.  3 08:50 src
+drwxrwxr-x 2 tv tv 4096 juil.  3 08:50 test
+
+$ cat platformio.ini
+```
+
+```ini
+[env:lolin32]
+platform = espressif32
+board = lolin32
+framework = arduino
+```
+
+Le _framework_ [Arduino pour ESP32](https://github.com/espressif/arduino-esp32) est installé localement :
+
+```bash
+$ ls - l $HOME/.platformio/packages/framework-arduinoespressif32/
+```
+
+Les brochages spécifiques sont définis dans un fichier `pins_arduino.h` situé dans `$HOME/.platformio/packages/framework-arduinoespressif32/variants/`
+
+> Par exemple pour la carte `lolin32` : `$HOME/.platformio/packages/framework-arduinoespressif32/variants/lolin32`
+
+L'ensemble des paramètres sont dans `$HOME/.platformio/packages/framework-arduinoespressif32/boards.txt`. Il y a plus de 22000 lignes donc un `grep` est souvent nécessaire :
+
+```bash
+$ cat $HOME/.platformio/packages/framework-arduinoespressif32/boards.txt | grep "^lolin32\..*"
+lolin32.name=WEMOS LOLIN32
+lolin32.bootloader.tool=esptool_py
+lolin32.bootloader.tool.default=esptool_py
+lolin32.upload.tool=esptool_py
+lolin32.upload.tool.default=esptool_py
+lolin32.upload.tool.network=esp_ota
+lolin32.upload.maximum_size=1310720
+lolin32.upload.maximum_data_size=327680
+...
+lolin32.build.target=esp32
+lolin32.build.mcu=esp32
+lolin32.build.core=esp32
+lolin32.build.variant=lolin32
+lolin32.build.board=LOLIN32
+lolin32.build.f_cpu=240000000L
+lolin32.build.flash_mode=dio
+lolin32.build.flash_size=4MB
+lolin32.build.boot=dio
+lolin32.build.partitions=default
+...
+```
+
+Les paramètres utilisés par défaut sont fixés dans : `$HOME/.platformio/platforms/espressif32/boards/lolin32.json` :
+
+```json
+{
+  "build": {
+    "arduino":{
+      "ldscript": "esp32_out.ld"
+    },
+    "core": "esp32",
+    "extra_flags": "-DARDUINO_LOLIN32",
+    "f_cpu": "240000000L",
+    "f_flash": "40000000L",
+    "flash_mode": "dio",
+    "mcu": "esp32",
+    "variant": "lolin32"
+  },
+  "connectivity": [
+    "wifi",
+    "bluetooth",
+    "ethernet",
+    "can"
+  ],
+  "debug": {
+    "openocd_board": "esp-wroom-32.cfg"
+  },
+  "frameworks": [
+    "arduino",
+    "espidf"
+  ],
+  "name": "WEMOS LOLIN32",
+  "upload": {
+    "flash_size": "4MB",
+    "maximum_ram_size": 327680,
+    "maximum_size": 4194304,
+    "require_upload_port": true,
+    "speed": 460800
+  },
+  "url": "https://wiki.wemos.cc/products:lolin32:lolin32",
+  "vendor": "WEMOS"
+}
+```
+
+On peut personnaliser ces paramètres dans `platformio.ini` avec la syntaxe suivante :
+
+```ini
+[env:lolin32]
+platform = espressif32
+framework = arduino
+board = lolin32
+board_build.mcu = esp32
+board_build.f_cpu = 240000000L
+board_build.partitions=huge_app.csv
+```
+
+> [!TIP]
+> Corrélation entre le fichier `.json` et `platformio.ini` :
+> 
+> ```json
+> {
+>     "build": {
+>         ...,
+>         "f_cpu": "240000000L", /* donc board_build.f_cpu */
+>     },
+>     ...
+> }
+> ```
+
+Le SDK spécifique pour l'esp32 se situe dans `$HOME/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32` et tous les fichiers d'entête dans `include/`
+
+La configuration (des `#define`) se trouve toujours dans un fichier _header_ `sdkconfig.h`, ici pour l'esp32 : `$HOME/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include/sdkconfig.h`
+
+Exemple de programme [src/arduino-esp32/src/main.cpp](src/arduino-esp32/src/main.cpp) :
+
+```cpp
+#include <Arduino.h>
+
+int esp32Led = 1; // LED_BUILTIN
+
+void setup()
+{
+    Serial.begin(115200);
+    pinMode(esp32Led, OUTPUT);
+#ifdef DEBUG
+    Serial.println("Setup done");
+#endif
+    Serial.print("CPU freq : ");
+    Serial.println(String(ESP.getCpuFreqMHz()) + " MHz");
+    Serial.print("CPU cores : ");
+    esp_chip_info_t out_info;
+    esp_chip_info(&out_info);
+    Serial.println(String(out_info.cores));
+    Serial.print("Flash size : ");
+    Serial.println(String(ESP.getFlashChipSize() / 1000000) + " MB");
+    Serial.print("Free RAM : ");
+    Serial.println(String((long)ESP.getFreeHeap()) + " bytes");
+}
+
+void loop()
+{
+#ifdef DEBUG
+    Serial.println("Start blink");
+#endif
+    // Hello world!, non blink!
+    digitalWrite(esp32Led, HIGH);
+    delay(1000);
+    digitalWrite(esp32Led, LOW);
+    delay(1000);
+}
+```
+
+Fabrication du projet :
+
+```sh
+$ pio run -v
+Processing lolin32 (platform: espressif32; board: lolin32; framework: arduino; build_flags: -DDEBUG; monitor_port: /dev/ttyUSB0; monitor_speed: 115200)
+
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/lolin32.html
+PLATFORM: Espressif 32 (6.1.0) > WEMOS LOLIN32
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.20007.0 (2.0.7) 
+ - tool-esptoolpy @ 1.40500.0 (4.5.0) 
+ - toolchain-xtensa-esp32 @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 33 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+xtensa-esp32-elf-g++ -o .pio/build/lolin32/src/main.cpp.o -c \
+-Wno-frame-address -std=gnu++11 -fexceptions -fno-rtti -Os -mlongcalls \
+-ffunction-sections -fdata-sections -Wno-error=unused-function \
+-Wno-error=unused-variable -Wno-error=deprecated-declarations \
+-Wno-unused-parameter -Wno-sign-compare -ggdb -freorder-blocks \
+ -Wwrite-strings -fstack-protector -fstrict-volatile-bitfields \
+-Wno-error=unused-but-set-variable -fno-jump-tables \
+-fno-tree-switch-conversion -MMD -DPLATFORMIO=60115 -DARDUINO_LOLIN32 -DDEBUG \
+-DHAVE_CONFIG_H -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" \
+-DUNITY_INCLUDE_CONFIG_H -DWITH_POSIX -D_GNU_SOURCE -DIDF_VER=\"v4.4.4\" \
+-DESP_PLATFORM -D_POSIX_READER_WRITER_LOCKS -DARDUINO_ARCH_ESP32 -DESP32 \
+-DF_CPU=240000000L -DARDUINO=10812 -DARDUINO_VARIANT=\"lolin32\" \
+"-DARDUINO_BOARD=\"WEMOS LOLIN32\"" -DARDUINO_PARTITION_default -Iinclude -Isrc ... \
+src/main.cpp
+
+xtensa-esp32-elf-g++ -o .pio/build/lolin32/FrameworkArduino/USBCDC.cpp.o -c ... \
+~/.platformio/packages/framework-arduinoespressif32/cores/esp32/USBCDC.cpp
+
+xtensa-esp32-elf-gcc -o .pio/build/lolin32/FrameworkArduino/wiring_shift.c.o  -c ... \
+~/.platformio/packages/framework-arduinoespressif32/cores/esp32/wiring_shift.c
+
+xtensa-esp32-elf-ar rc .pio/build/lolin32/libFrameworkArduino.a \
+.pio/build/lolin32/FrameworkArduino/Esp.cpp.o\
+.pio/build/lolin32/FrameworkArduino/FirmwareMSC.cpp.o ...\
+.pio/build/lolin32/FrameworkArduino/wiring_shift.c.o
+
+xtensa-esp32-elf-ranlib .pio/build/lolin32/libFrameworkArduino.a
+
+xtensa-esp32-elf-g++ -o .pio/build/lolin32/firmware.elf ... .pio/build/lolin32/src/main.cpp.o ... \
+ -Wl,--start-group .pio/build/lolin32/libFrameworkArduino.a -lesp_ringbuf -lefuse ... \
+ -lstdc++ -lpthread -lgcc -lcxx -lapp_trace -lgcov -lapp_trace -lgcov -lc -Wl,--end-group
+
+RAM:   [=         ]   6.8% (used 22424 bytes from 327680 bytes)
+Flash: [==        ]  20.3% (used 266513 bytes from 1310720 bytes)
+.pio/build/lolin32/firmware.elf  :
+section                                                                                size         addr
+...
+
+Total                                                                               5900891
+"~/.platformio/penv/bin/python" "~/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 elf2image --flash_mode dio --flash_freq 40m --flash_size 4MB --elf-sha256-offset 0xb0 -o .pio/build/lolin32/firmware.bin .pio/build/lolin32/firmware.elf
+esptool.py v4.5
+Creating esp32 image...
+Merged 2 ELF sections
+Successfully created esp32 image.
+[SUCCESS] Took 5.84 seconds
+```
+
+Les outils utilisés ici par PlaformIO sont :
+
+- `toolchain-xtensa-esp32` dans `~/.platformio/packages/toolchain-xtensa-esp32/bin/`
+- `framework-arduinoespressif32` dans `~/.platformio/packages/framework-arduinoespressif32/`
+- `tool-esptoolpy` dans `~ /.platformio/packages/tool-esptoolpy/`
+
+La chaîne de développement `xtensa-esp32` (pour les 2 cœurs Tensilica LX6 32 bits de l'ESP32) fournit notamment les compilateurs C++ `xtensa-esp32-elf-g++` et C `xtensa-esp32-elf-gcc`. Ils servent à compiler le fichier source `src/main.cpp` et l'ensemble du framework `arduinoespressif32`. Les fichiers objets `.o` produits sont stockés dans l'arborescence `.pio/build/lolin32/` (`src` et `FrameworkArduino`).
+
+```sh
+$ ls -l .pio/build/lolin32/src/
+-rw-rw-r-- 1 tv tv 14625 juil.  3 18:09 main.cpp.d
+-rw-rw-r-- 1 tv tv 94552 juil.  3 18:09 main.cpp.o
+
+$ file .pio/build/lolin32/src/main.cpp.o
+.pio/build/lolin32/src/main.cpp.o: ELF 32-bit LSB relocatable, Tensilica Xtensa, version 1 (SYSV), with debug_info, not stripped
+
+$ cat .pio/build/lolin32/src/main.cpp.d 
+.pio/build/lolin32/src/main.cpp.o: src/main.cpp \
+ ~/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
+ ~/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \
+ ...
+ ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include/soc/esp32/spiram.h
+
+$ ls -l .pio/build/lolin32/FrameworkArduino/
+-rw-rw-r-- 1 tv tv  15061 juil.  3 18:09 base64.cpp.d
+-rw-rw-r-- 1 tv tv  90244 juil.  3 18:09 base64.cpp.o
+...
+-rw-rw-r-- 1 tv tv  14798 juil.  3 18:09 WString.cpp.d
+-rw-rw-r-- 1 tv tv 291112 juil.  3 18:09 WString.cpp.o
+```
+
+L'utilitaire `xtensa-esp32-elf-ar` crée l'archive `libFrameworkArduino.a` avec l'ensemble des fichiers objets `.o` du framework `arduinoespressif32` et `xtensa-esp32-elf-ranlib` génère l'index de l'archive à l'intérieur de celle-ci. L'index répertorie chaque symbole défini dans l'archive (table de symboles). L'archive `libFrameworkArduino.a` est une **[bibliothèque logicielle](https://fr.wikipedia.org/wiki/Biblioth%C3%A8que_logicielle) statique**. L'utilitaire `xtensa-esp32-elf-nm` permet de lister la table des symboles de l'archive.
+
+> [!NOTE]
+> Une bibliothèque statique est destinée à être copiée dans le programme lors de la construction de ce dernier (c'est la phase d'édition de liens).
+
+```sh
+$ ls -lh .pio/build/lolin32/libFrameworkArduino.a
+-rw-rw-r-- 1 tv tv 3,2M juil.  3 21:32 .pio/build/lolin32/libFrameworkArduino.a
+$ file .pio/build/lolin32/libFrameworkArduino.a
+.pio/build/lolin32/libFrameworkArduino.a: current ar archive
+
+$ ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-nm -s .pio/build/lolin32/libFrameworkArduino.a
+```
+
+Ensuite, `xtensa-esp32-elf-g++` réalise l'édition de liens pour produire l'"exécutable" `firmware.elf`.
+
+> [!NOTE]
+> ELF (_Executable and Linkable Format_) est un format de fichier binaire utilisé pour l'enregistrement de code compilé. Il est par exemple utilisé dans la plupart des systèmes d'exploitation de type Unix comme GNU/Linux.
+
+L'utilitaire `esptool.py` finalise le processus de fabrication en produisant le fichier `firmware.bin` à partir de `firmware.elf`. C'est le fichier `firmware.bin` qui sera "téléversé" (_upload_) vers l'ESP32.
+
+```sh
+$ ls -lh .pio/build/lolin32/firmware.*
+-rw-rw-r-- 1 tv tv 261K juil.  3 20:22 .pio/build/lolin32/firmware.bin
+-rwxrwxr-x 1 tv tv 5,8M juil.  3 20:22 .pio/build/lolin32/firmware.elf
+-rw-rw-r-- 1 tv tv 8,6M juil.  3 20:22 .pio/build/lolin32/firmware.map
+
+$ file .pio/build/lolin32/firmware.elf
+.pio/build/lolin32/firmware.elf: ELF 32-bit LSB executable, Tensilica Xtensa, version 1 (SYSV), statically linked, with debug_info, not stripped
+
+$ ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-size -B -d .pio/build/lolin32/firmware.elf
+   text	   data	    bss	    dec	    hex	filename
+ 196465	  70304	   3809	 270578	  420f2	.pio/build/lolin32/firmware.elf
+
+$ ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-objdump -f .pio/build/lolin32/firmware.elf
+
+.pio/build/lolin32/firmware.elf:     file format elf32-xtensa-le
+architecture: xtensa, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0x4008290c
+```
+
+Téléversement (_upload_) :
+
+```sh
+$ pio run -t upload -v
+Processing lolin32 (platform: espressif32; board: lolin32; framework: arduino; build_flags: -DDEBUG; monitor_port: /dev/ttyUSB0; monitor_speed: 115200)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/lolin32.html
+PLATFORM: Espressif 32 (6.1.0) > WEMOS LOLIN32
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.20007.0 (2.0.7) 
+ - tool-esptoolpy @ 1.40500.0 (4.5.0) 
+ - tool-mkfatfs @ 2.0.1 
+ - tool-mklittlefs @ 1.203.210628 (2.3) 
+ - tool-mkspiffs @ 2.230.0 (2.30) 
+ - toolchain-xtensa-esp32 @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 33 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+<lambda>(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+MethodWrapper(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]   6.8% (used 22424 bytes from 327680 bytes)
+Flash: [==        ]  20.3% (used 266513 bytes from 1310720 bytes)
+.pio/build/lolin32/firmware.elf  :
+section                                                                                size         addr
+.rtc.text                                                                                 0   1074528256
+...
+<lambda>(["upload"], [".pio/build/lolin32/firmware.bin"])
+AVAILABLE: cmsis-dap, esp-bridge, esp-prog, espota, esptool, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa
+CURRENT: upload_protocol = esptool
+BeforeUpload(["upload"], [".pio/build/lolin32/firmware.bin"])
+Auto-detected: /dev/ttyUSB0
+"~/.platformio/penv/bin/python" "~/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 --port "/dev/ttyUSB0" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/arduino-esp32/.pio/build/lolin32/bootloader.bin 0x8000 ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/arduino-esp32/.pio/build/lolin32/partitions.bin 0xe000 ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin 0x10000 .pio/build/lolin32/firmware.bin
+esptool.py v4.5
+Serial port /dev/ttyUSB0
+Connecting....
+Chip is ESP32-D0WDQ6 (revision v1.0)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: 24:62:ab:f2:5a:18
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00001000 to 0x00005fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Flash will be erased from 0x0000e000 to 0x0000ffff...
+Flash will be erased from 0x00010000 to 0x00051fff...
+Compressed 17488 bytes to 12168...
+Writing at 0x00001000... (100 %)
+Wrote 17488 bytes (12168 compressed) at 0x00001000 in 0.6 seconds (effective 245.5 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 146...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (146 compressed) at 0x00008000 in 0.1 seconds (effective 389.8 kbit/s)...
+Hash of data verified.
+Compressed 8192 bytes to 47...
+Writing at 0x0000e000... (100 %)
+Wrote 8192 bytes (47 compressed) at 0x0000e000 in 0.1 seconds (effective 512.0 kbit/s)...
+Hash of data verified.
+Compressed 266880 bytes to 147807...
+Writing at 0x00010000... (10 %)
+Writing at 0x0001c812... (20 %)
+Writing at 0x00024f36... (30 %)
+Writing at 0x0002a059... (40 %)
+Writing at 0x0002f5a1... (50 %)
+Writing at 0x00034ce0... (60 %)
+Writing at 0x0003e0ec... (70 %)
+Writing at 0x000461c5... (80 %)
+Writing at 0x0004b6af... (90 %)
+Writing at 0x000510be... (100 %)
+Wrote 266880 bytes (147807 compressed) at 0x00010000 in 3.4 seconds (effective 623.1 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+[SUCCESS] Took 6.83 seconds
+```
+
+Par défaut, PlatformIO utilise l'utilitaire `esptool.py` pour écrire dans la mémoire FLASH (`write_flash`) l'ensemble des fichiers nécessaires à l'exécutation du programme `firmware.bin` sur l'ESP32 :
+
+| Adresse |     Fichier      | Description                         |
+| ------- | :--------------: | ----------------------------------- |
+| 0x1000  |  bootloader.bin  | Le chargeur d'amorçage de l'ESP32   |
+| 0x8000  |  partitions.bin  | Le partitionnement de la mémoire    |
+| 0xe000  |  boot_app0.bin   | Le chargeur du programme exécutable |
+| 0x10000 | **firmware.bin** | Le programme exécutable             |
+
+A la fin, l'utilitaire `esptool.py` effectue un _reset_ (`hard_reset`) de la carte ESP32.
+
+On peut monitorer l'exécution du programme sur le port série virtuel :
+
+```sh
+$ pio device monitor -p /dev/ttyUSB0
+--- Terminal on /dev/ttyUSB0 | 115200 8-N-1
+--- Available filters and text transformations: colorize, debug, default, direct, esp32_exception_decoder, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ets Jun  8 2016 00:22:57
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13192
+load:0x40080400,len:3028
+entry 0x400805e4
+Setup done
+CPU freq : 240 MHz
+CPU cores : 2
+Flash size : 4 MB
+Free RAM : 291464 bytes
+Start blink
+Start blink
+...
+```
+
+##### Framework espidf
+
+TODO
+
+### Débugueur
+
+TODO
+
+## Tests unitaires (Unity)
+
+Les tests unitaires sont supportés par [PlatformIO](https://platformio.org/) avec le _framework_ [Unity](https://docs.platformio.org/en/latest/advanced/unit-testing/frameworks/unity.html) (par défaut) :
+
+- [Unit Testing](https://docs.platformio.org/en/latest/advanced/unit-testing/index.html)
+- [Exemples](https://docs.platformio.org/en/latest/advanced/unit-testing/introduction.html)
+- [Unity Assertions Reference](https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityAssertionsReference.md)
+- [Assertions CheatSheet (PDF)](https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityAssertionsCheatSheetSuitableforPrintingandPossiblyFraming.pdf)
+
+Les tests peuvent être réalisés :
+
+- en local (on utilise alors la plateforme `native`)
+
+```ini
+[env:native]
+platform = native
+test_filter = test_point
+```
+
+Les tests unitaires sont placés dans le répertoire `test`. Ici, dans `test/test_point/` :
+
+```cpp
+#include <unity.h>
+
+#include "Point.h" // La classe Point
+
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
+// "Q1 : Constructeur par défaut"
+void test_unitaire_q1()
+{
+    Point p0;
+
+    TEST_ASSERT_EQUAL_FLOAT(p0.getX(), 0.);
+    TEST_ASSERT_EQUAL_FLOAT(p0.getY(), 0.);
+}
+
+// "Q2 : Constructeur d'initialisation"
+void test_unitaire_q2()
+{
+    Point p1(1., 2.);
+    Point p2(4., 0.);
+
+    TEST_ASSERT_EQUAL_FLOAT(p1.getX(), 1.);
+    TEST_ASSERT_EQUAL_FLOAT(p1.getY(), 2.);
+    TEST_ASSERT_EQUAL_FLOAT(p2.getX(), 4.);
+    TEST_ASSERT_EQUAL_FLOAT(p2.getY(), 0.);
+}
+
+// ...
+
+// "Qx : Affiche les coordonnées d'un point"
+/*
+void test_unitaire_qx()
+{
+    Point p0;
+
+    p0.affiche(); // la méthode existe
+    TEST_IGNORE();
+}
+*/
+
+int main()
+{
+    UNITY_BEGIN(); // IMPORTANT LINE!
+    RUN_TEST(test_unitaire_q1);
+    RUN_TEST(test_unitaire_q2);
+    // ...
+    return UNITY_END(); // stop unit testing
+}
+```
+
+Tests unitaires pour les questions Q1, Q2, ... :
+
+```cpp
+$ pio test -e native
+Verbosity level can be increased via `-v, -vv, or -vvv` option
+Collected 8 tests
+
+Processing test_point in native environment
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_point/test_point_main.cpp:80: test_unitaire_q1        [PASSED]
+test/test_point/test_point_main.cpp:81: test_unitaire_q2        [PASSED]
+test/test_point/test_point_main.cpp:82: test_unitaire_q3        [PASSED]
+test/test_point/test_point_main.cpp:53: test_unitaire_q4        [SKIPPED]
+test/test_point/test_point_main.cpp:84: test_unitaire_q5        [PASSED]
+test/test_point/test_point_main.cpp:85: test_unitaire_q6        [PASSED]
+---------------------------------------------------------------------------------------------- native:test_point [PASSED] Took 0.68 seconds ----------------------------------------------------------------------------------------------
+
+================================================================================================================ SUMMARY ================================================================================================================
+Environment    Test        Status    Duration
+-------------  ----------  --------  ------------
+native         test_point  PASSED    00:00:00.676
+========================================================================================== 6 test cases: 1 skipped, 5 succeeded in 00:00:00.676 ==========================================================================================
+```
+
+Test unitaire pour une question Q _n_ :
+
+```cpp
+$ pio test -e q1
+Verbosity level can be increased via `-v, -vv, or -vvv` option
+Collected 8 tests
+
+Processing test_point_q1 in q1 environment
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_point_q1/test_point_main.cpp:27: test_unitaire_q1     [PASSED]
+---------------------------------------------------------------------------------------------- q1:test_point_q1 [PASSED] Took 0.28 seconds ----------------------------------------------------------------------------------------------
+
+================================================================================================================ SUMMARY ================================================================================================================
+Environment    Test           Status    Duration
+-------------  -------------  --------  ------------
+q1             test_point_q1  PASSED    00:00:00.282
+=============================================================================================== 1 test cases: 1 succeeded in 00:00:00.282 ===============================================================================================
+```
+
+- en embarqué (ici, on utilise un ESP32 avec le _framework_ Arduino)
+
+```ini
+[env:lolin32]
+platform = espressif32
+board = lolin32
+framework = arduino
+lib_deps =
+test_filter = test_point_esp32
+upload_port = /dev/ttyUSB0
+upload_speed = 115200
+monitor_port = /dev/ttyUSB0
+monitor_speed = 115200
+```
+
+Les tests unitaires sont placés dans le répertoire `test`. Ici, dans `test/test_point_esp32/` :
+
+```cpp
+#include <Arduino.h>
+#include <unity.h>
+
+#include "Point.h" // La classe Point
+
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
+// "Q1 : Constructeur par défaut"
+void test_unitaire_q1()
+{
+    Point p0;
+
+    TEST_ASSERT_EQUAL_FLOAT(p0.getX(), 0.);
+    TEST_ASSERT_EQUAL_FLOAT(p0.getY(), 0.);
+}
+
+// "Q2 : Constructeur d'initialisation"
+void test_unitaire_q2()
+{
+    Point p1(1., 2.);
+    Point p2(4., 0.);
+
+    TEST_ASSERT_EQUAL_FLOAT(p1.getX(), 1.);
+    TEST_ASSERT_EQUAL_FLOAT(p1.getY(), 2.);
+    TEST_ASSERT_EQUAL_FLOAT(p2.getX(), 4.);
+    TEST_ASSERT_EQUAL_FLOAT(p2.getY(), 0.);
+}
+
+// ...
+
+void setup()
+{
+    UNITY_BEGIN(); // IMPORTANT LINE!
+    RUN_TEST(test_unitaire_q1);
+    RUN_TEST(test_unitaire_q2);
+    // ...
+    UNITY_END(); // stop unit testing
+}
+
+void loop()
+{
+}
+```
+
+Tests unitaires pour les questions Q1, Q2, ... sur un **ESP32** :
+
+```cpp
+$ pio test -e lolin32
+Verbosity level can be increased via `-v, -vv, or -vvv` option
+Collected 8 tests
+
+Processing test_point_esp32 in lolin32 environment
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Building & Uploading...
+Testing...
+If you don't see any output for the first 10 secs, please reset board (press reset button)
+
+test/test_point_esp32/test_point_main.cpp:81: test_unitaire_q1  [PASSED]
+test/test_point_esp32/test_point_main.cpp:82: test_unitaire_q2  [PASSED]
+test/test_point_esp32/test_point_main.cpp:83: test_unitaire_q3  [PASSED]
+test/test_point_esp32/test_point_main.cpp:54: test_unitaire_q4  [SKIPPED]
+test/test_point_esp32/test_point_main.cpp:85: test_unitaire_q5  [PASSED]
+test/test_point_esp32/test_point_main.cpp:86: test_unitaire_q6  [PASSED]
+------------------------------------------------------------------------------------------ lolin32:test_point_esp32 [PASSED] Took 31.35 seconds ------------------------------------------------------------------------------------------
+
+================================================================================================================ SUMMARY ================================================================================================================
+Environment    Test              Status    Duration
+-------------  ----------------  --------  ------------
+lolin32        test_point_esp32  PASSED    00:00:31.347
+========================================================================================== 6 test cases: 1 skipped, 5 succeeded in 00:00:31.347 ==========================================================================================
+```
+
+> Voir aussi avec Github Classroom : https://github.com/btssn-lasalle84/tp-poo-platformio
+
+## Test distant
+
+Lien : https://piolabs.com/blog/insights/unit-testing-part-3.html
+
+TODO
+
+## Intégration continue (GitHub Actions)
 
 GitHub Actions permet d'automatiser des tâches associées à un dépôt GitHub.
 
