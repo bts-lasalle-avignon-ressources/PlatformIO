@@ -1,0 +1,173 @@
+Processing lolin32 (platform: espressif32; board: lolin32; framework: arduino; build_flags: -DDEBUG; monitor_port: /dev/ttyUSB0; monitor_speed: 115200)
+--------------------------------------------------------------------------------
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/lolin32.html
+PLATFORM: Espressif 32 (6.1.0) > WEMOS LOLIN32
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.20007.0 (2.0.7) 
+ - tool-esptoolpy @ 1.40500.0 (4.5.0) 
+ - tool-mkfatfs @ 2.0.1 
+ - tool-mklittlefs @ 1.203.210628 (2.3) 
+ - tool-mkspiffs @ 2.230.0 (2.30) 
+ - toolchain-xtensa-esp32 @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 33 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+<lambda>(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+MethodWrapper(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]   6.8% (used 22424 bytes from 327680 bytes)
+Flash: [==        ]  20.3% (used 266525 bytes from 1310720 bytes)
+.pio/build/lolin32/firmware.elf  :
+section                                                                                size         addr
+.rtc.text                                                                                 0   1074528256
+.rtc.dummy                                                                                0   1073217536
+.rtc.force_fast                                                                           0   1073217536
+.rtc_noinit                                                                              16   1342177792
+.rtc.force_slow                                                                           0   1342177808
+.iram0.vectors                                                                         1027   1074266112
+.iram0.text                                                                           57395   1074267140
+.dram0.data                                                                           18632   1073470304
+.ext_ram_noinit                                                                           0   1065353216
+.noinit                                                                                   0   1073488936
+.ext_ram.bss                                                                              0   1065353216
+.dram0.bss                                                                             3792   1073488936
+.flash.appdesc                                                                          256   1061158944
+.flash.rodata                                                                         51672   1061159200
+.flash.rodata_noload                                                                      0   1061210872
+.flash.text                                                                          137799   1074593824
+.iram0.text_end                                                                           1   1074324535
+.iram0.data                                                                               0   1074324536
+.iram0.bss                                                                                0   1074324536
+.dram0.heap_start                                                                         0   1073492728
+.xt.prop                                                                             159384            0
+.xt.lit                                                                                4776            0
+.xtensa.info                                                                             56            0
+.comment                                                                                166            0
+.xt.prop._ZN14HardwareSerial9readBytesEPcj                                               36            0
+.xt.prop._ZNSt14_Function_baseD2Ev                                                       36            0
+.xt.prop._ZTV14HardwareSerial                                                            12            0
+.xt.lit._ZN5Print5writeEPKc                                                               0            0
+.xt.prop._ZN5Print5writeEPKc                                                             48            0
+.xt.lit._ZN6String4initEv                                                                 0            0
+.xt.prop._ZN6String4initEv                                                               36            0
+.xt.prop._ZNK6String3lenEv                                                               60            0
+.xt.prop._ZN6String6setLenEi                                                             72            0
+.xt.lit._ZN3nvs4Lock4initEv                                                               0            0
+.xt.prop._ZN3nvs4Lock4initEv                                                             72            0
+.xt.lit._ZN14intrusive_listIN3nvs7Storage14NamespaceEntryEE17clearAndFreeNodesEv          0            0
+.xt.prop._ZN14intrusive_listIN3nvs7Storage14NamespaceEntryEE17clearAndFreeNodesEv       108            0
+.xt.prop._ZN14intrusive_listIN3nvs7Storage14NamespaceEntryEE9push_backEPS2_              60            0
+.xt.lit._ZN3nvs12NVSPartitionD5Ev                                                         0            0
+.xt.prop._ZN3nvs12NVSPartitionD5Ev                                                        0            0
+.xt.prop._ZN3nvs12NVSPartitionD2Ev                                                       36            0
+.xt.prop._ZN3nvs12NVSPartitionD0Ev                                                       36            0
+.xt.prop._ZTVN3nvs12NVSPartitionE                                                        12            0
+.xt.lit._ZN3nvs19NVSPartitionManagerD5Ev                                                  0            0
+.xt.prop._ZN3nvs19NVSPartitionManagerD5Ev                                                 0            0
+.xt.prop._ZN3nvs19NVSPartitionManagerD2Ev                                                36            0
+.xt.prop._ZN3nvs19NVSPartitionManagerD0Ev                                                36            0
+.xt.prop._ZN14intrusive_listIN3nvs12NVSPartitionEE5eraseENS2_8iteratorE                  84            0
+.xt.prop._ZTVN3nvs19NVSPartitionManagerE                                                 12            0
+.xt.prop._ZN14intrusive_listIN3nvs8HashList13HashListBlockEE5eraseENS3_8iteratorE        84            0
+.xt.lit._ZN3nvs4ItemC5EhNS_8ItemTypeEhPKch                                                0            0
+.xt.prop._ZN3nvs4ItemC5EhNS_8ItemTypeEhPKch                                               0            0
+.xt.prop._ZN3nvs20isVariableLengthTypeENS_8ItemTypeE                                     48            0
+.xt.prop._ZN3nvs4ItemC2EhNS_8ItemTypeEhPKch                                              60            0
+.xt.prop._ZNK19CompressedEnumTableIN3nvs4Page10EntryStateELj2ELj126EE3getEjPS2_          48            0
+.xt.lit._ZN14intrusive_listIN3nvs4PageEE5clearEv                                          0            0
+.xt.prop._ZN14intrusive_listIN3nvs4PageEE5clearEv                                        60            0
+.xt.prop._ZN14intrusive_listIN3nvs4PageEE9push_backEPS1_                                 60            0
+.xt.prop._ZN14intrusive_listIN3nvs4PageEE5eraseENS2_8iteratorE                           84            0
+.xt.prop._ZTISt9exception                                                                12            0
+.xt.prop._ZTISt9bad_alloc                                                                12            0
+.xt.prop._ZTVN10__cxxabiv117__class_type_infoE                                           12            0
+.xt.prop._ZTVN10__cxxabiv120__si_class_type_infoE                                        12            0
+.xt.prop._ZTISt17bad_function_call                                                       12            0
+.xt.prop._ZTVSt17bad_function_call                                                       12            0
+.xt.lit._ZNK9__gnu_cxx24__concurrence_lock_error4whatEv                                   8            0
+.xt.lit._ZNK9__gnu_cxx26__concurrence_unlock_error4whatEv                                 8            0
+.xt.lit._ZN9__gnu_cxx24__concurrence_lock_errorD5Ev                                       8            0
+.xt.lit._ZN9__gnu_cxx26__concurrence_unlock_errorD5Ev                                     8            0
+.xt.lit._ZN9__gnu_cxx7__mutex4lockEv                                                      8            0
+.xt.lit._ZN9__gnu_cxx13__scoped_lockD5Ev                                                  8            0
+.xt.prop._ZNK9__gnu_cxx24__concurrence_lock_error4whatEv                                 48            0
+.xt.prop._ZNK9__gnu_cxx26__concurrence_unlock_error4whatEv                               48            0
+.xt.prop._ZN9__gnu_cxx24__concurrence_lock_errorD5Ev                                     12            0
+.xt.prop._ZN9__gnu_cxx26__concurrence_unlock_errorD5Ev                                   12            0
+.xt.prop._ZN9__gnu_cxx7__mutex4lockEv                                                    48            0
+.xt.prop._ZN9__gnu_cxx13__scoped_lockD5Ev                                                12            0
+.xt.prop._ZN9__gnu_cxx24__concurrence_lock_errorD2Ev                                     36            0
+.xt.prop._ZN9__gnu_cxx26__concurrence_unlock_errorD2Ev                                   36            0
+.xt.prop._ZN9__gnu_cxx24__concurrence_lock_errorD0Ev                                     36            0
+.xt.prop._ZN9__gnu_cxx26__concurrence_unlock_errorD0Ev                                   36            0
+.xt.prop._ZN9__gnu_cxx13__scoped_lockD2Ev                                                72            0
+.xt.prop._ZTIN9__gnu_cxx24__concurrence_lock_errorE                                      12            0
+.xt.prop._ZTIN9__gnu_cxx26__concurrence_unlock_errorE                                    12            0
+.xt.prop._ZTVN9__gnu_cxx24__concurrence_lock_errorE                                      12            0
+.xt.prop._ZTVN9__gnu_cxx26__concurrence_unlock_errorE                                    12            0
+.debug_frame                                                                          65128            0
+.debug_info                                                                         3132664            0
+.debug_abbrev                                                                        272002            0
+.debug_loc                                                                           476996            0
+.debug_aranges                                                                        26016            0
+.debug_ranges                                                                         66696            0
+.debug_line                                                                         1167796            0
+.debug_str                                                                           256878            0
+Total                                                                               5900948
+<lambda>(["upload"], [".pio/build/lolin32/firmware.bin"])
+AVAILABLE: cmsis-dap, esp-bridge, esp-prog, espota, esptool, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa
+CURRENT: upload_protocol = esptool
+BeforeUpload(["upload"], [".pio/build/lolin32/firmware.bin"])
+Auto-detected: /dev/ttyUSB0
+"/home/tv/.platformio/penv/bin/python" "/home/tv/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 --port "/dev/ttyUSB0" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 /mnt/sda/home/tv/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/arduino-esp32/.pio/build/lolin32/bootloader.bin 0x8000 /mnt/sda/home/tv/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/arduino-esp32/.pio/build/lolin32/partitions.bin 0xe000 /home/tv/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin 0x10000 .pio/build/lolin32/firmware.bin
+esptool.py v4.5
+Serial port /dev/ttyUSB0
+Connecting....
+Chip is ESP32-D0WDQ6 (revision v1.0)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: 24:62:ab:f2:5a:18
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00001000 to 0x00005fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Flash will be erased from 0x0000e000 to 0x0000ffff...
+Flash will be erased from 0x00010000 to 0x00051fff...
+Compressed 17488 bytes to 12168...
+Writing at 0x00001000... (100 %)
+Wrote 17488 bytes (12168 compressed) at 0x00001000 in 0.6 seconds (effective 238.7 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 146...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (146 compressed) at 0x00008000 in 0.1 seconds (effective 491.5 kbit/s)...
+Hash of data verified.
+Compressed 8192 bytes to 47...
+Writing at 0x0000e000... (100 %)
+Wrote 8192 bytes (47 compressed) at 0x0000e000 in 0.1 seconds (effective 516.0 kbit/s)...
+Hash of data verified.
+Compressed 266896 bytes to 147766...
+Writing at 0x00010000... (10 %)
+Writing at 0x0001c76c... (20 %)
+Writing at 0x00024f3d... (30 %)
+Writing at 0x0002a07a... (40 %)
+Writing at 0x0002f5b4... (50 %)
+Writing at 0x00034d04... (60 %)
+Writing at 0x0003e11c... (70 %)
+Writing at 0x00046202... (80 %)
+Writing at 0x0004b6ed... (90 %)
+Writing at 0x000510ff... (100 %)
+Wrote 266896 bytes (147766 compressed) at 0x00010000 in 3.4 seconds (effective 623.1 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+========================= [SUCCESS] Took 6.86 seconds =========================
