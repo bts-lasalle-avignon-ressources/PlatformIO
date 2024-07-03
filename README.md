@@ -260,31 +260,6 @@ Use `pio system prune --dry-run` to list them or `pio system prune` to save disk
 
 > Guide : https://docs.platformio.org/en/stable/core/userguide/index.html
 
-Par exemple, pour rechercher une carte **stm32** :
-
-```sh
-$ pio boards stm32
-...
-
-Platform: ststm32
-=================================================================================================
-ID                         MCU             Frequency    Flash     RAM       Name
--------------------------  --------------  -----------  --------  --------  ----------------------
-...
-disco_l475vg_iot01a        STM32L475VGT6   80MHz        1MB       128KB     ST DISCO-L475VG-IOT01A
-...
-nucleo_f401re              STM32F401RET6   84MHz        512KB     96KB      ST Nucleo F401RE
-...
-
-$ pio boards disco_l475vg_iot01a
-
-Platform: ststm32
-======================================================================================
-ID                   MCU            Frequency    Flash    RAM    Name
--------------------  -------------  -----------  -------  -----  ----------------------
-disco_l475vg_iot01a  STM32L475VGT6  80MHz        1MB      128KB  ST DISCO-L475VG-IOT01A
-```
-
 L'arborescence de PlatformIO est la suivante :
 
 ```sh
@@ -405,7 +380,7 @@ $ pio run -t upload -v
 Les fichiers générés pendant la fabrication sont stockés dans un répertoire `.pio`.
 
 > [!IMPORTANT]
-> ⚠️ Ces fichiers ne doivent jamais être conservés dans un dépôt `git`.
+> Ces fichiers ne doivent jamais être conservés dans un dépôt `git`.
 
 ### Nettoyer un projet
 
@@ -678,7 +653,7 @@ Un environnement (`[env]`) est défini par au moins trois paramètres :
 
 - la plateforme (_platform_) qui permet l'intégration des cartes spécifiques d'un fabricant (kits de développement, MCU), de _frameworks_ et de SDK.
 - la carte (_board_) qui dispose de paramètres préconfigurés pour les tâches de fabrication, programmation, débogage, etc.
-- le _framework_
+- le _framework_ de développement
 
 #### Carte (_board_)
 
@@ -809,7 +784,7 @@ lolin32.build.partitions=default
 ...
 ```
 
-Les paramètres utilisés par défaut sont fixés dans : `$HOME/.platformio/platforms/espressif32/boards/lolin32.json` :
+Les paramètres utilisés par défaut pour une carte sont fixés dans un fichier [JSON](https://fr.wikipedia.org/wiki/JavaScript_Object_Notation), ici : `$HOME/.platformio/platforms/espressif32/boards/lolin32.json` :
 
 ```json
 {
@@ -953,30 +928,29 @@ xtensa-esp32-elf-g++ -o .pio/build/lolin32/src/main.cpp.o -c \
 -DF_CPU=240000000L -DARDUINO=10812 -DARDUINO_VARIANT=\"lolin32\" \
 "-DARDUINO_BOARD=\"WEMOS LOLIN32\"" -DARDUINO_PARTITION_default -Iinclude -Isrc ... \
 src/main.cpp
-
+...
 xtensa-esp32-elf-g++ -o .pio/build/lolin32/FrameworkArduino/USBCDC.cpp.o -c ... \
 ~/.platformio/packages/framework-arduinoespressif32/cores/esp32/USBCDC.cpp
-
+...
 xtensa-esp32-elf-gcc -o .pio/build/lolin32/FrameworkArduino/wiring_shift.c.o  -c ... \
 ~/.platformio/packages/framework-arduinoespressif32/cores/esp32/wiring_shift.c
-
+...
 xtensa-esp32-elf-ar rc .pio/build/lolin32/libFrameworkArduino.a \
 .pio/build/lolin32/FrameworkArduino/Esp.cpp.o\
 .pio/build/lolin32/FrameworkArduino/FirmwareMSC.cpp.o ...\
 .pio/build/lolin32/FrameworkArduino/wiring_shift.c.o
-
+...
 xtensa-esp32-elf-ranlib .pio/build/lolin32/libFrameworkArduino.a
-
+...
 xtensa-esp32-elf-g++ -o .pio/build/lolin32/firmware.elf ... .pio/build/lolin32/src/main.cpp.o ... \
  -Wl,--start-group .pio/build/lolin32/libFrameworkArduino.a -lesp_ringbuf -lefuse ... \
  -lstdc++ -lpthread -lgcc -lcxx -lapp_trace -lgcov -lapp_trace -lgcov -lc -Wl,--end-group
-
+...
 RAM:   [=         ]   6.8% (used 22424 bytes from 327680 bytes)
 Flash: [==        ]  20.3% (used 266513 bytes from 1310720 bytes)
 .pio/build/lolin32/firmware.elf  :
 section                                                                                size         addr
 ...
-
 Total                                                                               5900891
 "~/.platformio/penv/bin/python" "~/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 elf2image --flash_mode dio --flash_freq 40m --flash_size 4MB --elf-sha256-offset 0xb0 -o .pio/build/lolin32/firmware.bin .pio/build/lolin32/firmware.elf
 esptool.py v4.5
@@ -993,6 +967,9 @@ Les outils utilisés ici par PlaformIO sont :
 - `tool-esptoolpy` dans `~ /.platformio/packages/tool-esptoolpy/`
 
 La chaîne de développement `xtensa-esp32` (pour les 2 cœurs Tensilica LX6 32 bits de l'ESP32) fournit notamment les compilateurs C++ `xtensa-esp32-elf-g++` et C `xtensa-esp32-elf-gcc`. Ils servent à compiler le fichier source `src/main.cpp` et l'ensemble du framework `arduinoespressif32`. Les fichiers objets `.o` produits sont stockés dans l'arborescence `.pio/build/lolin32/` (`src` et `FrameworkArduino`).
+
+> [!TIP]
+> L'étiquette `DEBUG` a été ajouté au moment de la compilation (`xtensa-esp32-elf-g++ -c`). L'option `-DDEBUG` ajouté (et équivalente à `#define DEBUG`) provient du paramétre `build_flags` du fichier `platformio.ini`.
 
 ```sh
 $ ls -l .pio/build/lolin32/src/
@@ -1154,7 +1131,7 @@ Par défaut, PlatformIO utilise l'utilitaire `esptool.py` pour écrire dans la m
 | 0xe000  |  boot_app0.bin   | Le chargeur du programme exécutable |
 | 0x10000 | **firmware.bin** | Le programme exécutable             |
 
-A la fin, l'utilitaire `esptool.py` effectue un _reset_ (`hard_reset`) de la carte ESP32.
+A la fin, l'utilitaire `esptool.py` effectue un _reset_ (`hard_reset`) de la carte ESP32. L'ESP32 reboote et exécute le programme `firmware.bin`.
 
 On peut monitorer l'exécution du programme sur le port série virtuel :
 
