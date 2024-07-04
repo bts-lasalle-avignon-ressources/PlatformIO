@@ -1,6 +1,21 @@
 #include <Arduino.h>
 
-int esp32Led = 1; // LED_BUILTIN
+// cf. platformio.ini
+#ifdef DEBUG
+#warning "Debug mode enabled"
+#else
+#warning "Release mode enabled"
+#endif
+
+#ifdef esp32_debug
+#warning "env esp32_debug enabled"
+#endif
+
+#ifdef esp32_release
+#warning "env esp32_release enabled"
+#endif
+
+uint8_t esp32Led = 1; // LED_BUILTIN
 
 void setup()
 {
