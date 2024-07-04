@@ -572,6 +572,8 @@ Quelques caractéristiques :
 
 ### Détection
 
+> Sous GNU/Linux, cf. https://docs.platformio.org/en/latest/core/installation/udev-rules.html
+
 ```bash
 $ sudo dmesg
 ...
@@ -582,6 +584,11 @@ $ sudo dmesg
 [1973869.449250] usb 1-2: SerialNumber: 0001
 [1973869.458370] cp210x 1-2:1.0: cp210x converter detected
 [1973869.459262] usb 1-2: cp210x converter now attached to ttyUSB0
+
+$ lsusb
+...
+Bus 001 Device 030: ID 10c4:ea60 Silicon Labs CP210x UART Bridge
+...
 ```
 
 > L'ESP32 s'interface via un pont USB/UART [CP2102](https://www.silabs.com/interface/usb-bridges/classic/device.cp2102?tab=specs)
@@ -743,6 +750,7 @@ $ cat platformio.ini
 ```
 
 ```ini
+; Exemple 1 : un environnement
 [env:lolin32]
 platform = espressif32
 board = lolin32
@@ -1165,6 +1173,7 @@ Start blink
 Exemple avec plusieurs environnements :
 
 ```ini
+; Exemple 2 : deux environnements
 [env]
 platform = espressif32
 board = lolin32
@@ -1179,10 +1188,12 @@ build_flags = -DDEBUG -D$PIOENV
 build_flags = -D$PIOENV
 ```
 
-On peut regrouper des paramétres communs dans la section `[env]`, puis créer deux environnements avec les sections `[env:esp32_debug]` et `[env:esp32_release]`.
+On peut regrouper des paramétres communs dans la section `[env]`, puis créer deux environnements distincts avec les sections `[env:esp32_debug]` et `[env:esp32_release]`.
 
 > [!TIP]
 > Le nom de l'environnement peut être récupéré via la variable `$PIOENV` !
+
+On peut ensuite adapter le code source en fonction de l'environnement :
 
 ```cpp
 #include <Arduino.h>
@@ -1205,6 +1216,8 @@ On peut regrouper des paramétres communs dans la section `[env]`, puis créer d
 
 Tests :
 
+- on commence par nettoyer
+
 ```sh
 $ pio run --target clean
 Processing esp32_debug (platform: espressif32; board: lolin32; framework: arduino)
@@ -1226,7 +1239,11 @@ Environment    Status    Duration
 esp32_debug    SUCCESS   00:00:00.182
 esp32_release  SUCCESS   00:00:00.185
 2 succeeded in 00:00:00.368
+```
 
+- On fabrique en sélectionnant l'environnement `esp32_release`
+
+```sh
 $ pio run -e esp32_release -v
 ...
 src/main.cpp:6:2: warning: #warning "Release mode enabled" [-Wcpp]
@@ -1246,7 +1263,13 @@ Environment    Status    Duration
 esp32_debug    IGNORED
 esp32_release  SUCCESS   00:00:02.676
 1 succeeded in 00:00:02.676
+```
 
+> Les options indiquées dans `build_flags` pour cet environnement ont bien été prises en compte (cf. `#warning`).
+
+- on peut flasher l'ESP32 et démarrer le moniteur série
+
+```sh
 $ pio run -e esp32_release -t upload -v && pio device monitor --baud 115200 --port /dev/ttyUSB0
 Processing esp32_release (build_flags: -D$PIOENV; platform: espressif32; board: lolin32; framework: arduino; monitor_port: /dev/ttyUSB0; monitor_speed: 115200)
 
@@ -1340,11 +1363,15 @@ Flash size : 4 MB
 Free RAM : 376660 bytes
 ```
 
+> Les affichages de `DEBUG` n'apparaissent plus pour cet environnement !
+
 ##### Framework espidf
 
 TODO
 
 ### Débugueur
+
+Lien : https://docs.platformio.org/en/stable/plus/debugging.html
 
 TODO
 
