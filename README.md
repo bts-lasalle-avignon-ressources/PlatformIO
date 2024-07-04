@@ -1140,6 +1140,40 @@ Par défaut, PlatformIO utilise l'utilitaire `esptool.py` pour écrire dans la m
 | 0xe000  |  boot_app0.bin   | Le chargeur du programme exécutable |
 | 0x10000 | **firmware.bin** | Le programme exécutable             |
 
+Le [partitionnement](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/partition-tables.html) de la mémoire flash a été défini (par défaut) par le fichier `default.csv` :
+
+```sh
+$ cat ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/default.csv
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x5000,
+otadata,  data, ota,     0xe000,  0x2000,
+app0,     app,  ota_0,   0x10000, 0x140000,
+app1,     app,  ota_1,   0x150000,0x140000,
+spiffs,   data, spiffs,  0x290000,0x160000,
+coredump, data, coredump,0x3F0000,0x10000,
+```
+
+> Il existe d'autres partitionnements disponibles. On utilisera le paramétre `board_build.partitions` dans `platformio.ini` pour changer de format.
+
+Le fichier `default.csv` a été converti au format `.bin` par l'utilitaire `gen_esp32part.py` :
+
+```sh
+$ ls -l .pio/build/lolin32/partitions.bin
+-rw-rw-r-- 1 tv tv 3072 juil.  4 18:56 .pio/build/lolin32/partitions.bin
+
+$ python ~/.platformio/packages/framework-arduinoespressif32/tools/gen_esp32part.py .pio/build/lolin32/partitions.bin
+Parsing binary partition input...
+Verifying table...
+# ESP-IDF Partition Table
+# Name, Type, SubType, Offset, Size, Flags
+nvs,data,nvs,0x9000,20K,
+otadata,data,ota,0xe000,8K,
+app0,app,ota_0,0x10000,1280K,
+app1,app,ota_1,0x150000,1280K,
+spiffs,data,spiffs,0x290000,1408K,
+coredump,data,coredump,0x3f0000,64K,
+```
+
 A la fin, l'utilitaire `esptool.py` effectue un _reset_ (`hard_reset`) de la carte ESP32. L'ESP32 reboote et exécute le programme `firmware.bin`.
 
 On peut monitorer l'exécution du programme sur le port série virtuel :
