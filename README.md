@@ -16,16 +16,22 @@
     - [Nettoyer un projet](#nettoyer-un-projet)
     - [Monitorer](#monitorer)
     - [Les bibliothèques](#les-bibliothèques)
-  - [Exemple : ESP32](#exemple--esp32)
+  - [Framework Arduino](#framework-arduino)
     - [Module testé : ESP32 AZ-Delivery Dev Kit C (NODEMCU)](#module-testé--esp32-az-delivery-dev-kit-c-nodemcu)
     - [Détection](#détection)
     - [platformio.ini](#platformioini)
       - [Carte (_board_)](#carte-board)
       - [Plateforme (_platform_)](#plateforme-platform)
       - [Framework](#framework)
-        - [Framework Arduino](#framework-arduino)
-        - [Framework espidf](#framework-espidf)
-    - [Débugueur](#débugueur)
+    - [Exemple 1 (un environnement)](#exemple-1-un-environnement)
+      - [Configuration](#configuration)
+      - [Code source](#code-source)
+      - [Build](#build)
+      - [Flash](#flash)
+      - [Partitions](#partitions)
+    - [Exemple 2 (deux environnements)](#exemple-2-deux-environnements)
+  - [Framework espidf](#framework-espidf)
+  - [Débugueur](#débugueur)
   - [Tests unitaires (Unity)](#tests-unitaires-unity)
   - [Test distant](#test-distant)
   - [Intégration continue (GitHub Actions)](#intégration-continue-github-actions)
@@ -543,7 +549,7 @@ $ platformio lib register https://os.mbed.com/users/tvaira/code/DISCO_L475VG_IOT
 The library has been successfully registered and is waiting for moderation
 ```
 
-## Exemple : ESP32
+## Framework Arduino
 
 ### Module testé : ESP32 AZ-Delivery Dev Kit C (NODEMCU)
 
@@ -724,9 +730,11 @@ La plateforme [espressif32](https://docs.platformio.org/en/latest/platforms/espr
 - [arduino](https://docs.platformio.org/en/latest/frameworks/arduino.html) : un portage du _framework_ [Arduino pour ESP32](https://github.com/espressif/arduino-esp32)
 - [espidf](https://docs.platformio.org/en/latest/frameworks/espidf.html#framework-espidf) : le _framework_ officiel d'[Espressif](https://github.com/espressif/esp-idf)
 
-##### Framework Arduino
+### Exemple 1 (un environnement)
 
-On crée un nouveau projet pour ce module :
+#### Configuration
+
+On crée un nouveau projet pour ce module avec le framework Arduino :
 
 ```bash
 $ pio project init --board lolin32 --project-option="framework=arduino"
@@ -864,6 +872,8 @@ Le SDK spécifique pour l'esp32 se situe dans `$HOME/.platformio/packages/framew
 
 La configuration (des `#define`) se trouve toujours dans un fichier _header_ `sdkconfig.h`, ici pour l'esp32 : `$HOME/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include/sdkconfig.h`
 
+#### Code source
+
 Exemple de programme [src/arduino-esp32/src/main.cpp](src/arduino-esp32/src/main.cpp) :
 
 ```cpp
@@ -902,6 +912,8 @@ void loop()
     delay(1000);
 }
 ```
+
+#### Build
 
 Fabrication du projet :
 
@@ -1045,6 +1057,11 @@ EXEC_P, HAS_SYMS, D_PAGED
 start address 0x4008290c
 ```
 
+> [!NOTE]
+> Un [firmware](https://fr.wikipedia.org/wiki/Firmware) (ou micrologiciel, microprogramme, microcode, logiciel interne ou encore logiciel embarqué) est un programme intégré dans un matériel informatique, ici l'ESP32, pour qu'il puisse fonctionner.
+
+#### Flash
+
 Téléversement (_upload_) :
 
 ```sh
@@ -1140,40 +1157,6 @@ Par défaut, PlatformIO utilise l'utilitaire `esptool.py` pour écrire dans la m
 | 0xe000  |  boot_app0.bin   | Le chargeur du programme exécutable |
 | 0x10000 | **firmware.bin** | Le programme exécutable             |
 
-Le [partitionnement](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/partition-tables.html) de la mémoire flash a été défini (par défaut) par le fichier `default.csv` :
-
-```sh
-$ cat ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/default.csv
-# Name,   Type, SubType, Offset,  Size, Flags
-nvs,      data, nvs,     0x9000,  0x5000,
-otadata,  data, ota,     0xe000,  0x2000,
-app0,     app,  ota_0,   0x10000, 0x140000,
-app1,     app,  ota_1,   0x150000,0x140000,
-spiffs,   data, spiffs,  0x290000,0x160000,
-coredump, data, coredump,0x3F0000,0x10000,
-```
-
-> Il existe d'autres partitionnements disponibles. On utilisera le paramétre `board_build.partitions` dans `platformio.ini` pour changer de format.
-
-Le fichier `default.csv` a été converti au format `.bin` par l'utilitaire `gen_esp32part.py` :
-
-```sh
-$ ls -l .pio/build/lolin32/partitions.bin
--rw-rw-r-- 1 tv tv 3072 juil.  4 18:56 .pio/build/lolin32/partitions.bin
-
-$ python ~/.platformio/packages/framework-arduinoespressif32/tools/gen_esp32part.py .pio/build/lolin32/partitions.bin
-Parsing binary partition input...
-Verifying table...
-# ESP-IDF Partition Table
-# Name, Type, SubType, Offset, Size, Flags
-nvs,data,nvs,0x9000,20K,
-otadata,data,ota,0xe000,8K,
-app0,app,ota_0,0x10000,1280K,
-app1,app,ota_1,0x150000,1280K,
-spiffs,data,spiffs,0x290000,1408K,
-coredump,data,coredump,0x3f0000,64K,
-```
-
 A la fin, l'utilitaire `esptool.py` effectue un _reset_ (`hard_reset`) de la carte ESP32. L'ESP32 reboote et exécute le programme `firmware.bin`.
 
 On peut monitorer l'exécution du programme sur le port série virtuel :
@@ -1204,7 +1187,129 @@ Start blink
 ...
 ```
 
-Exemple avec plusieurs environnements :
+#### Partitions
+
+La mémoire _flash_ de l'ESP32 est partitionnée.
+
+> La mémoire flash est découpée en secteurs d'une taille de 4 kB. Les partitions peuvent être cryptées (`encrypted`) et en lecteur seule (`readonly`)
+
+La table de partition se situe à l'offset `0x8000` par défaut et elle fournit les informations sur le découpage de la mémoire non-volatile.
+
+Elle occupe un secteur (4096 octets) qui permet d'y stocker 95 entrées max et une somme de contrôle MD5 pour vérifier son intégrité.
+
+Le [partitionnement](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/partition-tables.html) de la mémoire flash a été défini (par défaut) par le fichier `default.csv` :
+
+```sh
+$ cat ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/default.csv
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x5000,
+otadata,  data, ota,     0xe000,  0x2000,
+app0,     app,  ota_0,   0x10000, 0x140000,
+app1,     app,  ota_1,   0x150000,0x140000,
+spiffs,   data, spiffs,  0x290000,0x160000,
+coredump, data, coredump,0x3F0000,0x10000,
+```
+
+> Il existe d'autres partitionnements disponibles. On utilisera le paramétre `board_build.partitions` dans `platformio.ini` pour changer de format.
+
+Les partitions sont de deux types : `app` ou `data`.
+
+Les partitions `app` peuvent avoir le sous-type `factory` (le type par défaut pour les _firmwares_) ou `ota_x` (x de `0` à `15`).
+
+> [!NOTE]
+> [OTA](https://fr.wikipedia.org/wiki/Over-the-air_programming) (_Over The Air_) est un mécanisme de mise à jour du _firmware_ par transfert de données à distance (via WiFi, Bluetooth ou Ethernet).
+
+[OTA](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html) nécessite de configurer les tables de partition avec au moins deux partitions d'emplacement d'application OTA (`ota_0` et `ota_1`) et une partition de données OTA (`otadata`).
+
+Les partitions `data` peuvent avoir de nombreux sous-types : `nvs`, `ota`, `spiffs`, `coredump`, ...
+
+Le fichier `default.csv` a été converti au format `.bin` par l'utilitaire `gen_esp32part.py` :
+
+```sh
+$ ls -l .pio/build/lolin32/partitions.bin
+-rw-rw-r-- 1 tv tv 3072 juil.  4 18:56 .pio/build/lolin32/partitions.bin
+
+$ python ~/.platformio/packages/framework-arduinoespressif32/tools/gen_esp32part.py .pio/build/lolin32/partitions.bin
+Parsing binary partition input...
+Verifying table...
+# ESP-IDF Partition Table
+# Name, Type, SubType, Offset, Size, Flags
+nvs,data,nvs,0x9000,20K,
+otadata,data,ota,0xe000,8K,
+app0,app,ota_0,0x10000,1280K,
+app1,app,ota_1,0x150000,1280K,
+spiffs,data,spiffs,0x290000,1408K,
+coredump,data,coredump,0x3f0000,64K,
+```
+
+Ce qui donne le partionnement suivant :
+
+| Mémoire flash   |
+| :-------------: |
+| bootloader      |
+| partition_table |
+| nvs (20K)       |
+| otadata (8K)    |
+| app0 (1280K)    |
+| app1 (1280K)    |
+| spiffs (1408K)  |
+| coredump (64K)  |
+
+Le _firmware_ (`app`) doit être stocké à l'_offset_ `0x10000` pour être chargé par le _bootloader_ (par défaut).
+
+La partition [NVS](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html) (_Non-Volatile Storage_) est utilisée pour stocker des données de configuration (WiFi, Bluetooth, ...) dans la mémoire falsh (non volatile). La partition `nvs` est aussi utilisé pour stocker des certificats ou des données sensibles car elle prend en charge le cryptage (cf. la partition `nvs_keys` pour y stocker les clés). La taille recommandée pour cette partition est de 12 kB à 64 kB (par défaut 24 kB). Il est recommandé d'utiliser un système de fichiers FAT ou SPIFFS pour le stockage de plus grandes quantités de données.
+
+La bibliothèque [Preferences](https://docs.espressif.com/projects/arduino-esp32/en/latest/tutorials/preferences.html) utilise la partition NVS intégrée à l'ESP32 pour stocker des données. Ces données sont conservées lors des redémarrages et des événements de perte d'alimentation du système.
+
+> [!WARNING]
+> La bibliothèque [Preferences](https://docs.espressif.com/projects/arduino-esp32/en/latest/tutorials/preferences.html) est unique au _framework_ Arduino pour ESP32. Elle remplace l'obsolète bibliothèque Arduino EEPROM.
+
+Les données sont stockées dans des sections appelées « espace de noms » (_namespaces_). Dans chaque espace de noms se trouvent un ensemble de paires **clé-valeur**. La paire clé-valeur a un type de données.
+
+- Plusieurs espaces de noms sont autorisés dans NVS
+- Le nom de chaque espace de noms doit être unique
+- Les espaces de noms et les noms de clés sont sensibles à la casse
+- Chaque nom de clé doit être unique dans un espace de noms
+- Les noms d’espace de noms et de clés sont des chaînes de caractères et sont limités à un maximum de 15 caractères.
+- Un seul espace de noms peut être ouvert (en cours d'utilisation) à la fois
+
+L'ESP32 supporte trois systèmes de fichiers (pour les partitions de type `data`) :
+
+- `fat` ([FAT Filesystem Support](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/fatfs.html))
+- `spiffs` ([SPIFFS Filesystem](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/spiffs.html))
+- `littlefs` ([LittleFS filesystem](https://github.com/littlefs-project/littlefs))
+
+Si le _firmware_ à flasher est trop grand, on peut modifier le partitionnement en récupérant des espaces non utilisés (ota, spiffs, ...) :
+
+- `huge_app.csv` pour un _firmware_ de 3 MB :
+
+```sh
+$ cat ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/huge_app.csv
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x5000,
+otadata,  data, ota,     0xe000,  0x2000,
+app0,     app,  ota_0,   0x10000, 0x300000,
+spiffs,   data, spiffs,  0x310000,0xE0000,
+coredump, data, coredump,0x3F0000,0x10000,
+```
+
+- `no_ota.csv` pour un _firmware_ de 2 MB :
+
+```sh
+$ cat ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/no_ota.csv
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x5000,
+otadata,  data, ota,     0xe000,  0x2000,
+app0,     app,  ota_0,   0x10000, 0x200000,
+spiffs,   data, spiffs,  0x210000,0x1E0000,
+coredump, data, coredump,0x3F0000,0x10000,
+```
+
+> Il est aussi possible de personnaliser son partitionnement.
+
+### Exemple 2 (deux environnements)
+
+On modifie le fichier `platformio.ini` :
 
 ```ini
 ; Exemple 2 : deux environnements
@@ -1221,6 +1326,9 @@ build_flags = -DDEBUG -D$PIOENV
 [env:esp32_release]
 build_flags = -D$PIOENV
 ```
+
+> [!NOTE]
+> Le paramétre `build_flags` est très souvent utilisé par les développeurs car il permet de passer des options au compilateur C/C++. Les plus utilisés sont : `-Detiquette` (qui permet déclarer une étiquette constante), `-Ichemin` (pour indiquer un chemin vers des fichiers _headers_), `-Lchemin`  (pour indiquer un chemin vers des bibliothèques) et `-llib` (pour indiquer le nom d'une bibliothèque à lier pendant la phase d'édition de liens). Le paramétre `build_src_flags` peut être utilisé à la place si on souhaite limiter les options au répertoire `src/` du projet. Voir aussi [LDF](https://docs.platformio.org/en/latest/librarymanager/ldf.html) (_Library Dependency Finder_) associé au paramétre `lib_ldf_mode`.
 
 On peut regrouper des paramétres communs dans la section `[env]`, puis créer deux environnements distincts avec les sections `[env:esp32_debug]` et `[env:esp32_release]`.
 
@@ -1399,11 +1507,11 @@ Free RAM : 376660 bytes
 
 > Les affichages de `DEBUG` n'apparaissent plus pour cet environnement !
 
-##### Framework espidf
+## Framework espidf
 
 TODO
 
-### Débugueur
+## Débugueur
 
 Lien : https://docs.platformio.org/en/stable/plus/debugging.html
 
