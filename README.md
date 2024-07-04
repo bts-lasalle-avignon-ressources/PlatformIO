@@ -232,6 +232,7 @@ Commands:
   upgrade   Upgrade PlatformIO to the latest version
 ```
 
+> [!TIP]
 > Pour y accéder à partir d'un terminal, on peut ajouter ces lignes à la fin du fichier `~/.bashrc` :
 > ```sh
 > # plaformio
@@ -860,7 +861,7 @@ Exemple de programme [src/arduino-esp32/src/main.cpp](src/arduino-esp32/src/main
 ```cpp
 #include <Arduino.h>
 
-int esp32Led = 1; // LED_BUILTIN
+uint8_t esp32Led = 1; // LED_BUILTIN
 
 void setup()
 {
@@ -886,7 +887,7 @@ void loop()
 #ifdef DEBUG
     Serial.println("Start blink");
 #endif
-    // Hello world!, non blink!
+    // "Hello world!" ? non blink!
     digitalWrite(esp32Led, HIGH);
     delay(1000);
     digitalWrite(esp32Led, LOW);
@@ -1136,7 +1137,7 @@ A la fin, l'utilitaire `esptool.py` effectue un _reset_ (`hard_reset`) de la car
 On peut monitorer l'exécution du programme sur le port série virtuel :
 
 ```sh
-$ pio device monitor -p /dev/ttyUSB0
+$ pio device monitor --baud 115200 --port /dev/ttyUSB0
 --- Terminal on /dev/ttyUSB0 | 115200 8-N-1
 --- Available filters and text transformations: colorize, debug, default, direct, esp32_exception_decoder, hexlify, log2file, nocontrol, printable, send_on_enter, time
 --- More details at https://bit.ly/pio-monitor-filters
@@ -1159,6 +1160,184 @@ Free RAM : 291464 bytes
 Start blink
 Start blink
 ...
+```
+
+Exemple avec plusieurs environnements :
+
+```ini
+[env]
+platform = espressif32
+board = lolin32
+framework = arduino
+monitor_port = /dev/ttyUSB0
+monitor_speed = 115200
+
+[env:esp32_debug]
+build_flags = -DDEBUG -D$PIOENV
+
+[env:esp32_release]
+build_flags = -D$PIOENV
+```
+
+On peut regrouper des paramétres communs dans la section `[env]`, puis créer deux environnements avec les sections `[env:esp32_debug]` et `[env:esp32_release]`.
+
+> [!TIP]
+> Le nom de l'environnement peut être récupéré via la variable `$PIOENV` !
+
+```cpp
+#include <Arduino.h>
+
+#ifdef DEBUG
+#warning "Debug mode enabled"
+#else
+#warning "Release mode enabled"
+#endif
+
+#ifdef esp32_debug
+#warning "env esp32_debug enabled"
+#endif
+
+#ifdef esp32_release
+#warning "env esp32_release enabled"
+#endif
+...
+```
+
+Tests :
+
+```sh
+$ pio run --target clean
+Processing esp32_debug (platform: espressif32; board: lolin32; framework: arduino)
+
+Verbose mode can be enabled via `-v, --verbose` option
+Removing .pio/build/esp32_debug
+Done cleaning
+[SUCCESS] Took 0.18 seconds
+
+Processing esp32_release (platform: espressif32; board: lolin32; framework: arduino)
+
+Verbose mode can be enabled via `-v, --verbose` option
+Removing .pio/build/esp32_release
+Done cleaning
+[SUCCESS] Took 0.19 seconds
+
+Environment    Status    Duration
+-------------  --------  ------------
+esp32_debug    SUCCESS   00:00:00.182
+esp32_release  SUCCESS   00:00:00.185
+2 succeeded in 00:00:00.368
+
+$ pio run -e esp32_release -v
+...
+src/main.cpp:6:2: warning: #warning "Release mode enabled" [-Wcpp]
+ #warning "Release mode enabled"
+  ^
+src/main.cpp:14:2: warning: #warning "env release enabled" [-Wcpp]
+ #warning "env release enabled"
+...
+
+"~/.platformio/penv/bin/python" "~/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 elf2image --flash_mode dio --flash_freq 40m --flash_size 4MB -o .pio/build/esp32_release/firmware.bin .pio/build/esp32_release/firmware.elf
+esptool.py v3.1
+Merged 1 ELF section
+[SUCCESS] Took 2.68 seconds
+
+Environment    Status    Duration
+-------------  --------  ------------
+esp32_debug    IGNORED
+esp32_release  SUCCESS   00:00:02.676
+1 succeeded in 00:00:02.676
+
+$ pio run -e esp32_release -t upload -v && pio device monitor --baud 115200 --port /dev/ttyUSB0
+Processing esp32_release (build_flags: -D$PIOENV; platform: espressif32; board: lolin32; framework: arduino; monitor_port: /dev/ttyUSB0; monitor_speed: 115200)
+
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/lolin32.html
+PLATFORM: Espressif 32 (3.5.0) > WEMOS LOLIN32
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (esp-prog) External (esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.10006.210326 (1.0.6) 
+ - tool-esptoolpy @ 1.30100.210531 (3.1.0) 
+ - tool-mkspiffs @ 2.230.0 (2.30) 
+ - toolchain-xtensa32 @ 2.50200.97 (5.2.0)
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 28 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+...
+Auto-detected: /dev/ttyUSB0
+"/home/tvaira/.platformio/penv/bin/python" "/home/tvaira/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 --port "/dev/ttyUSB0" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 /home/tvaira/.platformio/packages/framework-arduinoespressif32/tools/sdk/bin/bootloader_dio_40m.bin 0x8000 /home/tvaira/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/arduino-esp32/.pio/build/esp32_release/partitions.bin 0xe000 /home/tvaira/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin 0x10000 .pio/build/esp32_release/firmware.bin
+esptool.py v3.1
+Serial port /dev/ttyUSB0
+Connecting....
+Chip is ESP32-D0WDQ6 (revision 1)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: 08:3a:f2:a8:e3:c0
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Auto-detected Flash size: 4MB
+Flash will be erased from 0x00001000 to 0x00005fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Flash will be erased from 0x0000e000 to 0x0000ffff...
+Flash will be erased from 0x00010000 to 0x00043fff...
+Compressed 17104 bytes to 11191...
+Writing at 0x00001000... (100 %)
+Wrote 17104 bytes (11191 compressed) at 0x00001000 in 0.6 seconds (effective 246.1 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 128...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (128 compressed) at 0x00008000 in 0.1 seconds (effective 356.1 kbit/s)...
+Hash of data verified.
+Compressed 8192 bytes to 47...
+Writing at 0x0000e000... (100 %)
+Wrote 8192 bytes (47 compressed) at 0x0000e000 in 0.1 seconds (effective 488.9 kbit/s)...
+Hash of data verified.
+Compressed 211168 bytes to 108577...
+Writing at 0x00010000... (14 %)
+Writing at 0x0001f0ac... (28 %)
+Writing at 0x00024845... (42 %)
+Writing at 0x0002d656... (57 %)
+Writing at 0x00034162... (71 %)
+Writing at 0x00039d3b... (85 %)
+Writing at 0x0003faf8... (100 %)
+Wrote 211168 bytes (108577 compressed) at 0x00010000 in 2.6 seconds (effective 652.0 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+[SUCCESS] Took 5.23 seconds
+
+Environment    Status    Duration
+-------------  --------  ------------
+esp32_debug    IGNORED
+esp32_release  SUCCESS   00:00:05.234
+1 succeeded in 00:00:05.234
+
+--- Terminal on /dev/ttyUSB0 | 115200 8-N-1
+--- Available filters and text transformations: colorize, debug, default, direct, esp32_exception_decoder, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ets Jun  8 2016 00:22:57
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+CPU freq : 240 MHz
+CPU cores : 2
+Flash size : 4 MB
+Free RAM : 376660 bytes
 ```
 
 ##### Framework espidf
