@@ -551,6 +551,8 @@ The library has been successfully registered and is waiting for moderation
 
 ## Framework Arduino
 
+Lien : https://docs.platformio.org/en/latest/frameworks/arduino.html
+
 ### Module testé : ESP32 AZ-Delivery Dev Kit C (NODEMCU)
 
 Module testé : https://www.az-delivery.de/fr/products/esp32-developmentboard
@@ -1509,7 +1511,81 @@ Free RAM : 376660 bytes
 
 ## Framework espidf
 
-TODO
+Liens :
+
+- https://docs.platformio.org/en/latest/frameworks/espidf.html#framework-espidf
+- https://github.com/espressif/esp-idf
+
+```bash
+$ pio project init --board lolin32 --project-option="framework=espidf"
+The following files/directories have been created in ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32
+include - Put project header files here
+lib - Put project specific (private) libraries here
+src - Put project source files here
+platformio.ini - Project Configuration File
+Resolving lolin32 dependencies...
+Tool Manager: Installing espressif/toolchain-xtensa-esp32 @ 11.2.0+2022r1
+Downloading  [####################################]  100%          
+Unpacking  [####################################]  100%          
+Tool Manager: toolchain-xtensa-esp32@11.2.0+2022r1 has been installed!
+Tool Manager: Installing platformio/toolchain-esp32ulp @ ~1.23500.0
+Downloading  [####################################]  100%
+Unpacking  [####################################]  100%
+Tool Manager: toolchain-esp32ulp@1.23500.220830 has been installed!
+Tool Manager: Installing platformio/framework-espidf @ ~3.50001.0
+Downloading  [####################################]  100%          
+Unpacking  [####################################]  100%          
+Tool Manager: framework-espidf@3.50001.0 has been installed!
+Tool Manager: Installing platformio/tool-cmake @ ~3.16.0
+Downloading  [####################################]  100%          
+Unpacking  [####################################]  100%          
+Tool Manager: tool-cmake@3.16.4 has been installed!
+Tool Manager: Installing platformio/tool-ninja @ ^1.7.0
+Downloading  [####################################]  100%
+Unpacking  [####################################]  100%
+Tool Manager: tool-ninja@1.7.1 has been installed!
+Already up-to-date.
+Project has been successfully initialized!
+```
+
+Si l'environnement n'est pas présent, PlatformIO installe les outils nécessaires au développement pour cette plateforme :
+
+- `toolchain-xtensa-esp32@11.2.0+2022r1`
+- `toolchain-esp32ulp@1.23500.220830`
+- `framework-espidf@3.50001.0`
+- `tool-cmake@3.16.4`
+- `tool-ninja@1.7.1`
+
+```sh
+$ ls -l ~/.platformio/packages/
+...
+drwx------ 7 tv tv 4096 juil.  5 06:52 framework-espidf
+drwx------ 6 tv tv 4096 juil.  5 06:52 toolchain-esp32ulp
+drwx------ 7 tv tv 4096 juil.  5 06:52 toolchain-xtensa-esp32
+drwx------ 6 tv tv 4096 juil.  5 06:52 tool-cmake
+drwx------ 2 tv tv 4096 juil.  5 06:52 tool-ninja
+```
+
+On retrouve l'arborescence initiale d'un projet PlatformIO :
+
+```sh
+$ ls -l
+drwxrwxr-x 2 tv tv 4096 juil.  5 06:52 include
+drwxrwxr-x 2 tv tv 4096 juil.  5 06:52 lib
+-rw-rw-r-- 1 tv tv  437 juil.  5 06:52 platformio.ini
+drwxrwxr-x 2 tv tv 4096 juil.  5 06:52 src
+drwxrwxr-x 2 tv tv 4096 juil.  5 06:52 test
+```
+
+Et le fichier de projet `platformio.ini` :
+
+```sh
+$ cat platformio.ini
+[env:lolin32]
+platform = espressif32
+board = lolin32
+framework = espidf
+```
 
 ## Débugueur
 
