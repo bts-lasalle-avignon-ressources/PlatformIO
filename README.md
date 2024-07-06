@@ -10,6 +10,7 @@
     - [Bibliothèques](#bibliothèques)
   - [PlatformIO CLI](#platformio-cli)
     - [Usage](#usage)
+    - [Mise à jour](#mise-à-jour)
     - [Créer un nouveau projet](#créer-un-nouveau-projet)
     - [Fabriquer un projet (_build_)](#fabriquer-un-projet-build)
     - [Programmer le système embarqué (_upload_)](#programmer-le-système-embarqué-upload)
@@ -25,6 +26,7 @@
       - [Framework](#framework)
     - [Exemple 1 (un environnement)](#exemple-1-un-environnement)
       - [Configuration](#configuration)
+      - [Mise à jour](#mise-à-jour-1)
       - [Code source](#code-source)
       - [Build](#build)
       - [Flash](#flash)
@@ -32,6 +34,11 @@
     - [Exemple 2 (deux environnements)](#exemple-2-deux-environnements)
   - [Framework espidf](#framework-espidf)
   - [Débugueur](#débugueur)
+    - [JTAG](#jtag)
+    - [J-Link SEGGER](#j-link-segger)
+    - [OpenOCD](#openocd)
+    - [ESP-PROG](#esp-prog)
+    - [ESP32-S3](#esp32-s3)
   - [Tests unitaires (Unity)](#tests-unitaires-unity)
   - [Test distant](#test-distant)
   - [Intégration continue (GitHub Actions)](#intégration-continue-github-actions)
@@ -195,6 +202,8 @@ On choisit sa bibliothèque et on accède à l'ensemble de ces informations :
 
 ## PlatformIO CLI
 
+Lien : https://docs.platformio.org/en/latest/core/index.html
+
 ### Usage
 
 PlatformIO fournit l'utilitaire `platformio` (ou son alias `pio`) pour programmer des systèmes embarqués (Arduino UNO, ESP32, etc.).
@@ -313,6 +322,26 @@ drwx------ 6 tv tv 4096 janv. 11 11:50 atmelavr
 drwx------ 7 tv tv 4096 mars  26 10:54 espressif32
 drwx------ 7 tv tv 4096 mars  27 18:05 espressif8266
 drwx------ 9 tv tv 4096 avril  1 06:38 ststm32
+```
+
+### Mise à jour
+
+Pour mettre à jour PlatformIO :
+
+```sh
+$ pio upgrade --help
+Usage: pio upgrade [OPTIONS]
+
+Options:
+  --dev                Use development branch
+  --only-dependencies
+  -v, --verbose
+  -h, --help           Show this message and exit.
+
+$ pio upgrade --dev
+Please wait while upgrading PlatformIO Core ...
+PlatformIO has been successfully upgraded to 6.1.16a1
+Release notes: https://docs.platformio.org/en/latest/history.html
 ```
 
 ### Créer un nouveau projet
@@ -693,7 +722,7 @@ lolin32                              ESP32    240MHz       4MB      320KB   WEMO
 
 > PlatformIO prend en charge plus de [1500 cartes](https://docs.platformio.org/en/latest/boards/index.html#boards).
 
-Sachant que ce module d'[AZ-Delivery](https://www.az-delivery.de/fr/) ne possède pas de définition dans PlatormIO, on va choisir l'ID [lolin32](https://docs.platformio.org/en/latest/boards/espressif32/lolin32.html) que l'on déclare dans `platformio.ini` de la manière suivante :
+Sachant que ce module d'[AZ-Delivery](https://www.az-delivery.de/fr/) ne possède pas de définition dans PlatormIO, on puet choisir un des trois IDs : [lolin32](https://docs.platformio.org/en/latest/boards/espressif32/lolin32.html), [esp32dev](https://docs.platformio.org/en/latest/boards/espressif32/esp32dev.html) ou [nodemcu-32s](https://docs.platformio.org/en/latest/boards/espressif32/nodemcu-32s.html) que l'on déclare dans `platformio.ini` de la manière suivante :
 
 ```ini
 [env]
@@ -723,7 +752,7 @@ platform = espressif32
 
 Lien : https://docs.platformio.org/en/latest/platforms/espressif32.html#platform-espressif32
 
-> PlatformIO prend en charge plus de [40 plateformes](https://registry.platformio.org/search?t=platform) dont `espressif32`, `espressif8266`, `atmelavr`, `ststm32` etc.
+> PlatformIO prend en charge plus de [40 plateformes](https://registry.platformio.org/search?t=platform) dont `espressif32`, `espressif8266`, `atmelavr`, `ststm32` etc. Voir aussi : https://docs.platformio.org/en/latest/projectconf/sections/env/options/platform/platform_packages.html
 
 #### Framework
 
@@ -765,6 +794,27 @@ $ cat platformio.ini
 platform = espressif32
 board = lolin32
 framework = arduino
+```
+
+#### Mise à jour
+
+Mettre à jour des dépendances et des _packages_ du projet :
+
+```sh
+$ pio pkg update
+Resolving lolin32 dependencies...
+Platform Manager: Updating espressif32 @ 6.1.0
+Platform Manager: Removing espressif32 @ 6.1.0
+Platform Manager: espressif32@6.1.0 has been removed!
+Platform Manager: Installing platformio/espressif32 @ 6.7.0
+Downloading  [####################################]  100%
+Unpacking  [####################################]  100%
+Platform Manager: espressif32@6.7.0 has been installed!
+Tool Manager: Installing platformio/tool-esptoolpy @ ~1.40501.0
+Downloading  [####################################]  100%
+Unpacking  [####################################]  100%
+Tool Manager: tool-esptoolpy@1.40501.0 has been installed!
+Already up-to-date.
 ```
 
 Le _framework_ [Arduino pour ESP32](https://github.com/espressif/arduino-esp32) est installé localement :
@@ -1317,7 +1367,7 @@ On modifie le fichier `platformio.ini` :
 ; Exemple 2 : deux environnements
 [env]
 platform = espressif32
-board = lolin32
+board = esp32dev
 framework = arduino
 monitor_port = /dev/ttyUSB0
 monitor_speed = 115200
@@ -1590,6 +1640,252 @@ framework = espidf
 ## Débugueur
 
 Lien : https://docs.platformio.org/en/stable/plus/debugging.html
+
+### JTAG
+
+Le terme [JTAG](https://fr.wikipedia.org/wiki/Joint_Test_Action_Group) (pour Joint Test Action Group), désignant le groupe de travail qui a conçu la norme, est abusivement (mais très largement) utilisé au lieu du terme générique _Boundary Scan_ ou du sigle TAP (_Test Access Port_,  port d'accès de test).
+
+La norme JTAG est utilisée pour donner un accès direct au processeur (points d'arrêt, lecture et écriture des registres internes, ...) sans perturber son fonctionnement. On nomme cette technique ICE (_In-Circuit Emulator_) ou ICD (_In-Circuit Debugger_), et elle est omniprésente sur les microprocesseurs et microcontrôleurs modernes.
+
+Le JTAG permet aussi de programmer des mémoires non-volatiles (EEPROM et Flash).
+
+> Le bus JTAG est un bus série synchrone.
+
+Exemple d'une interface JTAG :
+
+![](images/sam-ice.png)
+
+Détection :
+
+```sh
+$ dmesg
+...
+[  370.164106] usb 1-3: New USB device found, idVendor=1366, idProduct=0101, bcdDevice= 1.00
+[  370.164109] usb 1-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[  370.164111] usb 1-3: Product: J-Link
+[  370.164112] usb 1-3: Manufacturer: SEGGER
+[  370.164113] usb 1-3: SerialNumber: 000028010394
+
+$ lsusb
+...
+Bus 001 Device 005: ID 1366:0101 SEGGER J-Link PLUS
+...
+```
+
+> Sous GNU/Linux, cf. https://docs.platformio.org/en/latest/core/installation/udev-rules.html
+
+Liens :
+
+- https://www.microchip.com/en-us/development-tool/AT91SAM-ICE
+- https://www.segger.com/products/debug-probes/j-link/models/j-link-plus/
+- https://docs.platformio.org/en/stable/plus/debug-tools/jlink.html
+
+Sous GNU/Linux, l'interface JTAG SAM-ICE est pris en charge par [OpenOCD](http://openocd.org/) (_Open On-Chip Debugger_) ou [J-Link SEGGER](https://www.segger.com/jlink-software.html).
+
+|   ESP32 Pin   | JTAG Signal |
+| :-----------: | :---------: |
+| MTDO / GPIO15 |     TDO     |
+| MTDI / GPIO12 |     TDI     |
+| MTCK / GPIO13 |     TCK     |
+| MTMS / GPIO14 |     TMS     |
+|      3V3      |     VCC     |
+|      GND      |     GND     |
+
+![](images/connecteur-jtag.jpg)
+
+### J-Link SEGGER
+
+Il est possible d'installer [J-Link SEGGER](https://registry.platformio.org/tools/platformio/tool-jlink/installation) avec [PlatformIO CLI](https://docs.platformio.org/en/latest/core/index.html) :
+
+```sh
+$ pio pkg install --global --tool "platformio/tool-jlink"
+Tool Manager: Installing platformio/tool-jlink
+Downloading  [####################################]  100%
+Unpacking  [####################################]  100%
+Tool Manager: tool-jlink@1.78811.0 has been installed!
+
+$ ls -l ~/.platformio/packages/
+...
+drwx------ 8 tv tv 4096 juil.  6 08:57 tool-jlink
+```
+
+On configurera le fichier de projet `platformio.ini` pour utiliser [J-Link SEGGER](https://registry.platformio.org/tools/platformio/tool-jlink/installation) et l'interface JTAG SAM-ICE :
+
+```ini
+[env:esp32_debug]
+build_flags = -DDEBUG -D$PIOENV
+debug_tool = jlink
+; choisir son point d'arrêt initial
+;debug_init_break = break setup
+debug_init_break = tbreak loop
+;debug_init_break = break main.cpp:22
+;build_type = debug
+```
+
+> cf. https://docs.platformio.org/en/stable/plus/debug-tools/custom.html
+
+Ensuite, il suffit demarrer une session de débogage :
+
+![](images/demarrer-debogage.png)
+
+### OpenOCD
+
+[OpenOCD](http://openocd.org/) (_Open On-Chip Debugger_) fournit une prise en charge de la programmation et du débogage sur les microprocesseurs et microcontrôleurs avec une interface JTAG.
+
+Plusieurs interfaces réseau sont disponibles pour interagir avec OpenOCD : telnet et GDB. Le serveur GDB permet à OpenOCD de fonctionner comme une "cible distante" pour le débogage au niveau source des systèmes embarqués à l'aide du programme [GNU GDB](https://www.sourceware.org/gdb/).
+
+Il est possible d'installer [OpenOCD](https://registry.platformio.org/tools/platformio/tool-openocd-esp32/installation) avec [PlatformIO CLI](https://docs.platformio.org/en/latest/core/index.html) :
+
+```sh
+$ pio pkg install --global --tool "platformio/tool-openocd-esp32@^2.1200.20230419"
+
+$ ls -l ~/.platformio/packages/
+...
+drwx------ 4 tv tv 4096 juil.  6 13:38 tool-openocd-esp32
+
+$ ls -l ~/.platformio/packages/tool-openocd-esp32/bin/
+-rwxr-xr-x 1 tv tv 3695768 juil.  6  2022 openocd
+```
+
+On configurera le fichier de projet `platformio.ini` pour utiliser [OpenOCD](https://registry.platformio.org/tools/platformio/tool-openocd-esp32/installation) et l'interface JTAG SAM-ICE :
+
+```ini
+[env:esp32_debug]
+build_flags = -DDEBUG -D$PIOENV
+; Exemple 2 : openOCD + JTAG
+debug_server = 
+    $PLATFORMIO_CORE_DIR/packages/tool-openocd-esp32/bin/openocd
+    -f
+    "board/esp-wroom-32.cfg"
+; choisir son point d'arrêt initial
+;debug_init_break = break setup
+debug_init_break = tbreak loop
+;debug_init_break = break main.cpp:22
+;build_type = debug
+```
+
+> cf. https://docs.platformio.org/en/stable/plus/debug-tools/custom.html
+
+Les cartes supportées sont définies dans `~/.platformio/packages/tool-openocd-esp32/share/openocd/scripts/board/`. 
+
+On va modifier le fichier `esp-wroom-32.cfg` pour l'ESP32 via l'interface `jlink` :
+
+```sh
+$ vim ~/.platformio/packages/tool-openocd-esp32/share/openocd/scripts/board/esp-wroom-32.cfg
+source [find interface/jlink.cfg]
+set ESP32_FLASH_VOLTAGE 3.3
+source [find target/esp32.cfg]
+adapter speed 5000
+```
+
+Démarrer le débogage :
+
+![](images/pio-debug-1.png)
+
+![](images/pio-debug-2.png)
+
+Une session de débogage dans l'IDE :
+
+![](images/screenshot-debug.png)
+
+Ou une session de débogage avec PlatformIO CLI :
+
+```sh
+$ pio debug -e esp32_debug -v --load-mode=manual --interface=gdb -- -x .pioinit
+Reading symbols from ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/arduino-esp32/.pio/build/esp32_debug/firmware.elf...
+PlatformIO Unified Debugger -> https://bit.ly/pio-debug
+PlatformIO: debug_tool = custom
+PlatformIO: Initializing remote target...
+Open On-Chip Debugger  v0.11.0-esp32-20220706 (2022-07-06-15:48)
+Licensed under GNU GPL v2
+...
+adapter speed: 5000 kHz
+...
+Info : tcl server disabled
+Info : telnet server disabled
+Info : J-Link ARM V8 compiled Aug 26 2015 15:08:21
+Info : Hardware version: 8.00
+Info : VTarget = 3.293 V
+Info : clock speed 5000 kHz
+Info : JTAG tap: esp32.cpu0 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+Info : JTAG tap: esp32.cpu1 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+Info : starting gdb server for esp32.cpu0 on pipe
+Info : accepting 'gdb' connection from pipe
+Info : [esp32.cpu0] Target halted, PC=0x400F1992, debug_reason=00000000
+Info : Set GDB target to 'esp32.cpu0'
+Info : [esp32.cpu1] Target halted, PC=0x400F1992, debug_reason=00000000
+Warn : No symbols for FreeRTOS!
+Info : [esp32.cpu0] Target halted, PC=0x40092612, debug_reason=00000001
+Info : Flash mapping 0: 0x10020 -> 0x3f400020, 54 KB
+Info : Flash mapping 1: 0x20020 -> 0x400d0020, 138 KB
+Info : [esp32.cpu0] Target halted, PC=0x40092612, debug_reason=00000001
+Info : Auto-detected flash bank 'esp32.cpu0.flash' size 4096 KB
+Info : Using flash bank 'esp32.cpu0.flash' size 4096 KB
+Info : [esp32.cpu0] Target halted, PC=0x40092612, debug_reason=00000001
+Info : Flash mapping 0: 0x10020 -> 0x3f400020, 54 KB
+Info : Flash mapping 1: 0x20020 -> 0x400d0020, 138 KB
+Info : Using flash bank 'esp32.cpu0.irom' size 140 KB
+Info : [esp32.cpu0] Target halted, PC=0x40092612, debug_reason=00000001
+Info : Flash mapping 0: 0x10020 -> 0x3f400020, 54 KB
+Info : Flash mapping 1: 0x20020 -> 0x400d0020, 138 KB
+Info : Using flash bank 'esp32.cpu0.drom' size 56 KB
+Info : New GDB Connection: 1, Target esp32.cpu0, state: halted
+...
+Info : JTAG tap: esp32.cpu0 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+Info : JTAG tap: esp32.cpu1 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+JTAG tap: esp32.cpu0 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+JTAG tap: esp32.cpu1 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+Info : [esp32.cpu0] requesting target halt and executing a soft reset
+[esp32.cpu0] requesting target halt and executing a soft reset
+Info : [esp32.cpu0] Debug controller was reset.
+[esp32.cpu0] Debug controller was reset.
+Info : [esp32.cpu0] Core was reset.
+[esp32.cpu0] Core was reset.
+Info : [esp32.cpu0] Target halted, PC=0x500000CF, debug_reason=00000000
+[esp32.cpu0] Target halted, PC=0x500000CF, debug_reason=00000000
+Info : [esp32.cpu1] requesting target halt and executing a soft reset
+[esp32.cpu1] requesting target halt and executing a soft reset
+Info : [esp32.cpu0] Core was reset.
+[esp32.cpu0] Core was reset.
+Info : [esp32.cpu0] Target halted, PC=0x40000400, debug_reason=00000000
+[esp32.cpu0] Target halted, PC=0x40000400, debug_reason=00000000
+Info : [esp32.cpu1] Debug controller was reset.
+[esp32.cpu1] Debug controller was reset.
+Info : [esp32.cpu1] Core was reset.
+[esp32.cpu1] Core was reset.
+Info : [esp32.cpu1] Target halted, PC=0x40000400, debug_reason=00000000
+[esp32.cpu1] Target halted, PC=0x40000400, debug_reason=00000000
+Temporary breakpoint 1 at 0x400d1648: file src/main.cpp, line 42.
+PlatformIO: Initialization completed
+(gdb) PlatformIO: Resume the execution to `debug_init_break = tbreak loop`
+PlatformIO: More configuration options -> https://bit.ly/pio-debug
+Continuing.
+Note: automatically using hardware breakpoints for read-only addresses.
+Info : [esp32.cpu0] Target halted, PC=0x400F1992, debug_reason=00000000
+[esp32.cpu0] Target halted, PC=0x400F1992, debug_reason=00000000
+Info : Set GDB target to 'esp32.cpu0'
+Set GDB target to 'esp32.cpu0'
+Info : [esp32.cpu1] Target halted, PC=0x400D1648, debug_reason=00000001
+[esp32.cpu1] Target halted, PC=0x400D1648, debug_reason=00000001
+[New Thread 1073465464]
+[New Thread 1073466864]
+[New Thread 1073445580]
+[New Thread 1073446240]
+[New Thread 1073443880]
+[Switching to Thread 1073447304]
+
+Thread 1 "loopTask" hit Temporary breakpoint 1, loop () at src/main.cpp:42
+42	{
+(gdb) 
+```
+
+### ESP-PROG
+
+Lien : https://docs.platformio.org/en/latest/plus/debug-tools/esp-prog.html
+
+TODO
+
+### ESP32-S3
 
 TODO
 
