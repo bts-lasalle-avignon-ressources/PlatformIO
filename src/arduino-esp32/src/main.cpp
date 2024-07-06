@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 // cf. platformio.ini
+
 #ifdef DEBUG
 #warning "Debug mode enabled"
 #else
@@ -24,6 +25,7 @@ void setup()
 #ifdef DEBUG
     Serial.println("Setup done");
 #endif
+
     Serial.print("CPU freq : ");
     Serial.println(String(ESP.getCpuFreqMHz()) + " MHz");
     Serial.print("CPU cores : ");
