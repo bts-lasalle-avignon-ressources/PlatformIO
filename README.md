@@ -17,13 +17,14 @@
     - [Nettoyer un projet](#nettoyer-un-projet)
     - [Monitorer](#monitorer)
     - [Les bibliothèques](#les-bibliothèques)
-  - [Framework Arduino](#framework-arduino)
-    - [Module testé : ESP32 AZ-Delivery Dev Kit C (NODEMCU)](#module-testé--esp32-az-delivery-dev-kit-c-nodemcu)
+  - [Module testé](#module-testé)
+    - [ESP32 AZ-Delivery Dev Kit C (NODEMCU)](#esp32-az-delivery-dev-kit-c-nodemcu)
     - [Détection](#détection)
-    - [platformio.ini](#platformioini)
-      - [Carte (_board_)](#carte-board)
-      - [Plateforme (_platform_)](#plateforme-platform)
-      - [Framework](#framework)
+  - [platformio.ini](#platformioini)
+    - [Carte (_board_)](#carte-board)
+    - [Plateforme (_platform_)](#plateforme-platform)
+    - [Framework](#framework)
+  - [Framework Arduino](#framework-arduino)
     - [Exemple 1 (un environnement)](#exemple-1-un-environnement)
       - [Configuration](#configuration)
       - [Mise à jour](#mise-à-jour-1)
@@ -33,6 +34,12 @@
       - [Partitions](#partitions)
     - [Exemple 2 (deux environnements)](#exemple-2-deux-environnements)
   - [Framework espidf](#framework-espidf)
+    - [Configuration](#configuration-1)
+    - [Code source](#code-source-1)
+    - [Build](#build-1)
+    - [Flash](#flash-1)
+    - [Partitions](#partitions-1)
+    - [Voir aussi](#voir-aussi)
   - [Débugueur](#débugueur)
     - [JTAG](#jtag)
     - [J-Link SEGGER](#j-link-segger)
@@ -578,11 +585,9 @@ $ platformio lib register https://os.mbed.com/users/tvaira/code/DISCO_L475VG_IOT
 The library has been successfully registered and is waiting for moderation
 ```
 
-## Framework Arduino
+## Module testé
 
-Lien : https://docs.platformio.org/en/latest/frameworks/arduino.html
-
-### Module testé : ESP32 AZ-Delivery Dev Kit C (NODEMCU)
+### ESP32 AZ-Delivery Dev Kit C (NODEMCU)
 
 Module testé : https://www.az-delivery.de/fr/products/esp32-developmentboard
 
@@ -657,7 +662,7 @@ Nomenclature ESP32-D0WDQ6
 - `WD` : _Wi-Fi b/g/n + Bluetooth/Bluetooth LE dual mode_
 - `Q6` : _Package QFN 6*6_
 
-### platformio.ini
+## platformio.ini
 
 [platformio.ini](https://docs.platformio.org/en/latest/projectconf/index.html) est le fichier de configuration d'un projet PlatformIO.
 
@@ -700,7 +705,7 @@ Un environnement (`[env]`) est défini par au moins trois paramètres :
 - la carte (_board_) qui dispose de paramètres préconfigurés pour les tâches de fabrication, programmation, débogage, etc.
 - le _framework_ de développement
 
-#### Carte (_board_)
+### Carte (_board_)
 
 Recherche des cartes ESP32 :
 
@@ -730,7 +735,7 @@ platform = espressif32
 board = lolin32
 ```
 
-#### Plateforme (_platform_)
+### Plateforme (_platform_)
 
 Dans PlatformIO, une plateforme (_platform_) de développement est une architecture particulière de microcontrôleur sur laquelle les projets peuvent être compilés pour s'exécuter.
 
@@ -750,16 +755,24 @@ platform = espressif32
 ...
 ```
 
-Lien : https://docs.platformio.org/en/latest/platforms/espressif32.html#platform-espressif32
+Liens :
 
-> PlatformIO prend en charge plus de [40 plateformes](https://registry.platformio.org/search?t=platform) dont `espressif32`, `espressif8266`, `atmelavr`, `ststm32` etc. Voir aussi : https://docs.platformio.org/en/latest/projectconf/sections/env/options/platform/platform_packages.html
+- https://docs.platformio.org/en/latest/platforms/espressif32.html#platform-espressif32
+- https://github.com/platformio/platform-espressif32/tree/master/examples
 
-#### Framework
+> PlatformIO prend en charge plus de [40 plateformes](https://registry.platformio.org/search?t=platform) dont `espressif32`, `espressif8266`, `atmelavr`, `ststm32` etc.
+> Voir aussi : https://docs.platformio.org/en/latest/projectconf/sections/env/options/platform/platform_packages.html
+
+### Framework
 
 La plateforme [espressif32](https://docs.platformio.org/en/latest/platforms/espressif32.html#platform-espressif32) supporte deux _frameworks_ :
 
 - [arduino](https://docs.platformio.org/en/latest/frameworks/arduino.html) : un portage du _framework_ [Arduino pour ESP32](https://github.com/espressif/arduino-esp32)
 - [espidf](https://docs.platformio.org/en/latest/frameworks/espidf.html#framework-espidf) : le _framework_ officiel d'[Espressif](https://github.com/espressif/esp-idf)
+
+## Framework Arduino
+
+Lien : https://docs.platformio.org/en/latest/frameworks/arduino.html
 
 ### Exemple 1 (un environnement)
 
@@ -1637,6 +1650,604 @@ board = lolin32
 framework = espidf
 ```
 
+### Configuration
+
+Le _framework_ ESP-IDF nécessite une structure de projet spécifique car il utilise le système de construction [CMake](https://cmake.org/).
+
+D'autre part, la configuration générale du projet est définie dans un seul fichier appelé `sdkconfig` dans le dossier racine du projet. Ce fichier de configuration peut être créé et modifié :
+
+```sh
+$ pio run -t menuconfig
+```
+
+![](images/menuconfig-1.png)
+
+On séléctionne une mémoire _flash_ de 4MB :
+
+![](images/menuconfig-2.png)
+
+On obtient la structure de projet :
+
+```sh
+$ ls -l
+drwxrwxr-x 7 tv tv  4096 juil.  7 09:08 ./
+drwxrwxr-x 4 tv tv  4096 juil.  5 06:51 ../
+-rw-rw-r-- 1 tv tv   111 juil.  7 09:08 CMakeLists.txt
+-rw-rw-r-- 1 tv tv    13 juil.  7 08:42 .gitignore
+drwxrwxr-x 2 tv tv  4096 juil.  5 06:52 include/
+drwxrwxr-x 2 tv tv  4096 juil.  5 06:52 lib/
+drwxrwxr-x 3 tv tv  4096 juil.  7 09:07 .pio/
+-rw-rw-r-- 1 tv tv    72 juil.  5 07:02 platformio.ini
+-rw-rw-r-- 1 tv tv 55801 juil.  7 09:10 sdkconfig.lolin32
+drwxrwxr-x 2 tv tv  4096 juil.  7 09:08 src/
+drwxrwxr-x 2 tv tv  4096 juil.  5 06:52 test/
+
+$ ll src/
+total 16
+drwxrwxr-x 2 tv tv 4096 juil.  7 09:08 ./
+drwxrwxr-x 7 tv tv 4096 juil.  7 09:08 ../
+-rw-rw-r-- 1 tv tv  199 juil.  7 09:08 CMakeLists.txt
+-rw-rw-r-- 1 tv tv   18 juil.  7 09:08 main.c
+
+$ cat src/main.c
+void app_main() {}
+```
+
+On modifie le fichier de projet `platformio.ini` :
+
+```ini
+[env:lolin32]
+platform = espressif32
+board = lolin32
+framework = espidf
+build_flags = -DDEBUG
+```
+
+### Code source
+
+Exemple de programme [src/espidf-esp32/src/main.c](src/espidf-esp32/src/main.cpp) :
+
+```cpp
+#include <stdio.h>
+#include "sdkconfig.h"
+#include "esp_chip_info.h"
+#include "esp_flash.h"
+#include "esp_log.h"
+#include <driver/gpio.h>
+#include <rom/gpio.h>
+#include <include/soc/rtc.h>
+#include <esp_system.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+
+#ifdef DEBUG
+#warning "Debug mode enabled"
+#else
+#warning "Release mode enabled"
+#endif
+
+static const char* TAG = "app_main";
+
+gpio_num_t esp32Led = 1; // LED_BUILTIN
+
+void app_main()
+{
+#ifdef DEBUG
+    // printf("Hello world!\n");
+    ESP_LOGI(TAG, "Hello world!");
+#endif
+
+#ifdef DEBUG
+    esp_chip_info_t chip_info;
+    esp_chip_info(&chip_info);
+    rtc_cpu_freq_config_t conf;
+    rtc_clk_cpu_freq_get_config(&conf);
+    uint32_t flash_size;
+
+    ESP_LOGI(TAG, "Chip : %s", CONFIG_IDF_TARGET);
+    ESP_LOGI(TAG, "CPU freq : %lu MHz ", conf.freq_mhz);
+    ESP_LOGI(TAG, "CPU cores : %d", chip_info.cores);
+    unsigned major_rev = chip_info.revision / 100;
+    unsigned minor_rev = chip_info.revision % 100;
+    ESP_LOGI(TAG, "Revision : v%d.%d", major_rev, minor_rev);
+
+    if(esp_flash_get_size(NULL, &flash_size) == ESP_OK)
+    {
+        ESP_LOGI(TAG, "Flash size : %lu MB\n", flash_size / (1024 * 1024));
+    }
+    ESP_LOGI(TAG, "Free RAM : %ld bytes\n", esp_get_minimum_free_heap_size());
+#endif
+
+    // Start blink
+    gpio_pad_select_gpio(esp32Led);
+    gpio_set_direction(esp32Led, GPIO_MODE_OUTPUT);
+    while(1)
+    {
+        /* Blink off (output low) */
+        gpio_set_level(esp32Led, 0);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+        /* Blink on (output high) */
+        gpio_set_level(esp32Led, 1);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
+}
+```
+
+### Build
+
+Fabrication du projet :
+
+```sh
+$ pio run -e lolin32 -v
+Processing lolin32 (platform: espressif32; board: lolin32; framework: espidf)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/lolin32.html
+PLATFORM: Espressif 32 (6.7.0) > WEMOS LOLIN32
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-espidf @ 3.50201.240515 (5.2.1) 
+ - tool-cmake @ 3.16.4 
+ - tool-esptoolpy @ 1.40501.0 (4.5.1) 
+ - tool-ninja @ 1.7.1 
+ - tool-riscv32-esp-elf-gdb @ 12.1.0+20221002 
+ - tool-xtensa-esp-elf-gdb @ 12.1.0+20221002 
+ - toolchain-esp32ulp @ 1.23500.220830 (2.35.0) 
+ - toolchain-xtensa-esp-elf @ 13.2.0+20230928
+Reading CMake configuration...
+-- Found Git: /usr/bin/git (found version "2.34.1") 
+-- git rev-parse returned 'fatal: ni ceci ni aucun de ses répertoires parents n'est un dépôt git : .git'
+-- The C compiler identification is GNU 13.2.0
+-- The CXX compiler identification is GNU 13.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-gcc
+-- Check for working C compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-gcc
+-- Check for working C compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-gcc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-g++
+-- Check for working CXX compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-g++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building ESP-IDF components for target esp32
+-- Project sdkconfig file ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/sdkconfig.lolin32
+-- Compiler supported targets: xtensa-esp-elf
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of time_t
+-- Check size of time_t - done
+-- Found Python3: ~/.platformio/penv/.espidf-5.2.1/bin/python (found version "3.10.12") found components: Interpreter 
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
+-- App "espidf-esp32" version: 964c37f-dirty
+-- Adding linker script ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32/esp-idf/esp_system/ld/memory.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_system/ld/esp32/sections.ld.in
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.api.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.libgcc.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.newlib-data.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.syscalls.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.newlib-funcs.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/soc/esp32/ld/esp32.peripherals.ld
+-- Components: __pio_env app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp_adc esp_app_format esp_bootloader_format esp_coex esp_common esp_eth esp_event esp_gdbstub esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_local_ctrl esp_mm esp_netif esp_netif_stack esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_system esp_timer esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser idf_test ieee802154 json log lwip mbedtls mqtt newlib nvs_flash nvs_sec_provider openthread partition_table perfmon protobuf-c protocomm pthread sdmmc soc spi_flash spiffs src tcp_transport ulp unity usb vfs wear_levelling wifi_provisioning wpa_supplicant xtensa
+-- Component paths: ...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32
+...
+-- Found Git: /usr/bin/git (found version "2.34.1") 
+-- git rev-parse returned 'fatal: ni ceci ni aucun de ses répertoires parents n'est un dépôt git : .git'
+-- The C compiler identification is GNU 13.2.0
+-- The CXX compiler identification is GNU 13.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-gcc
+-- Check for working C compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-gcc
+-- Check for working C compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-gcc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-g++
+-- Check for working CXX compiler: ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-g++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- git rev-parse returned 'fatal: ni ceci ni aucun de ses répertoires parents n'est un dépôt git : .git'
+-- Could not use 'git describe' to determine PROJECT_VER.
+-- Building ESP-IDF components for target esp32
+-- Project sdkconfig file ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/sdkconfig.lolin32
+-- Compiler supported targets: xtensa-esp-elf
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of time_t
+-- Check size of time_t - done
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/soc/esp32/ld/esp32.peripherals.ld
+-- Bootloader project name: "bootloader" version: 1
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.api.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.libgcc.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld/esp32.rom.newlib-funcs.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/bootloader/subproject/main/ld/esp32/bootloader.ld
+-- Adding linker script ~/.platformio/packages/framework-espidf/components/bootloader/subproject/main/ld/esp32/bootloader.rom.ld
+-- Components: bootloader bootloader_support efuse esp_app_format esp_bootloader_format esp_common esp_hw_support esp_rom esp_system esptool_py freertos hal log main micro-ecc newlib partition_table soc spi_flash xtensa
+-- Component paths: ...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32/bootloader
+...
+~/.platformio/packages/tool-cmake/bin/cmake -DDATA_FILE=~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32/x509_crt_bundle -DSOURCE_FILE=~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32/x509_crt_bundle.S -DFILE_TYPE=BINARY -P ~/.platformio/packages/framework-espidf/tools/cmake/scripts/data_file_embed_asm.cmake
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 0 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+xtensa-esp32-elf-gcc -o .pio/build/lolin32/src/main.c.o -c -Og -Wall -Werror=all -Wextra -Wno-enum-conversion -Wno-error=deprecated-declarations -Wno-error=unused-but-set-variable -Wno-error=unused-function -Wno-error=unused-variable -Wno-frame-address -Wno-old-style-declaration -Wno-sign-compare -Wno-unused-parameter -fdata-sections -ffunction-sections -fmacro-prefix-map=~/.platformio/packages/framework-espidf=/IDF -fmacro-prefix-map=~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32=. -fno-jump-tables -fno-shrink-wrap -fno-tree-switch-conversion -fstrict-volatile-bitfields -gdwarf-4 -ggdb -mlongcalls -std=gnu17 -mlongcalls -Wno-frame-address -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -Og -fno-shrink-wrap -fmacro-prefix-map=~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32=. -fmacro-prefix-map=~/.platformio/packages/framework-espidf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -Wno-old-style-declaration -D_POSIX_READER_WRITER_LOCKS -D_GNU_SOURCE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DIDF_VER=\"5.2.1\" -DESP_PLATFORM -DPLATFORMIO=60116 -DARDUINO_LOLIN32 -I~/.platformio/packages/framework-espidf/components/xtensa/esp32/include ... -Iinclude -Isrc -I. src/main.c
+...
+xtensa-esp32-elf-gcc -o .pio/build/lolin32/bootloader.elf -Wl,--Map=~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32/bootloader/bootloader.map -Wl,--cref -Wl,--defsym=IDF_TARGET_ESP32=0 -Wl,--gc-sections -Wl,--no-warn-rwx-segments -Wl,--warn-common -Wno-frame-address -fno-lto -fno-rtti -mlongcalls -T esp32.rom.ld -T esp32.rom.api.ld -T esp32.rom.libgcc.ld -T esp32.rom.newlib-funcs.ld -T esp32.peripherals.ld -T bootloader.ld -T bootloader.rom.ld -u esp_dport_access_reg_read -u __assert_func -u esp_bootloader_desc -u abort -u __ubsan_include -u bootloader_hooks_include -Wl,--start-group .pio/build/lolin32/bootloader/esp-idf/xtensa/libxtensa.a .pio/build/lolin32/bootloader/esp-idf/main/libmain.a .pio/build/lolin32/bootloader/esp-idf/bootloader_support/libbootloader_support.a .pio/build/lolin32/bootloader/esp-idf/efuse/libefuse.a .pio/build/lolin32/bootloader/esp-idf/esp_bootloader_format/libesp_bootloader_format.a .pio/build/lolin32/bootloader/esp-idf/esp_common/libesp_common.a .pio/build/lolin32/bootloader/esp-idf/esp_hw_support/libesp_hw_support.a .pio/build/lolin32/bootloader/esp-idf/esp_rom/libesp_rom.a .pio/build/lolin32/bootloader/esp-idf/esp_system/libesp_system.a .pio/build/lolin32/bootloader/esp-idf/hal/libhal.a .pio/build/lolin32/bootloader/esp-idf/log/liblog.a .pio/build/lolin32/bootloader/esp-idf/micro-ecc/libmicro-ecc.a .pio/build/lolin32/bootloader/esp-idf/soc/libsoc.a .pio/build/lolin32/bootloader/esp-idf/spi_flash/libspi_flash.a -L.pio/build/lolin32 -L~/.platformio/packages/framework-espidf/components/esp_rom/esp32/ld -L~/.platformio/packages/framework-espidf/components/soc/esp32/ld -L~/.platformio/packages/framework-espidf/components/bootloader/subproject/main/ld/esp32 -L~/.platformio/packages/framework-espidf/components/xtensa/esp32 -Wl,--end-group -lxt_hal
+"~/.platformio/penv/bin/python" "~/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 elf2image --flash_mode dio --flash_freq 40m --flash_size 4MB -o .pio/build/lolin32/bootloader.bin .pio/build/lolin32/bootloader.elf
+esptool.py v4.5.1
+Creating esp32 image...
+Merged 2 ELF sections
+Successfully created esp32 image.
+xtensa-esp32-elf-gcc -o .pio/build/lolin32/firmware.elf ... -Wl,--start-group .pio/build/lolin32/esp-idf/xtensa/libxtensa.a .pio/build/lolin32/esp-idf/app_trace/libapp_trace.a .pio/build/lolin32/esp-idf/unity/libunity.a .pio/build/lolin32/esp-idf/cmock/libcmock.a .pio/build/lolin32/esp-idf/console/libconsole.a .pio/build/lolin32/esp-idf/esp_hid/libesp_hid.a .pio/build/lolin32/esp-idf/esp_lcd/libesp_lcd.a .pio/build/lolin32/esp-idf/protobuf-c/libprotobuf-c.a .pio/build/lolin32/esp-idf/protocomm/libprotocomm.a .pio/build/lolin32/esp-idf/esp_local_ctrl/libesp_local_ctrl.a .pio/build/lolin32/esp-idf/espcoredump/libespcoredump.a .pio/build/lolin32/esp-idf/wear_levelling/libwear_levelling.a .pio/build/lolin32/esp-idf/sdmmc/libsdmmc.a .pio/build/lolin32/esp-idf/fatfs/libfatfs.a .pio/build/lolin32/esp-idf/json/libjson.a .pio/build/lolin32/esp-idf/mqtt/libmqtt.a .pio/build/lolin32/esp-idf/nvs_sec_provider/libnvs_sec_provider.a .pio/build/lolin32/esp-idf/perfmon/libperfmon.a .pio/build/lolin32/esp-idf/spiffs/libspiffs.a .pio/build/lolin32/esp-idf/wifi_provisioning/libwifi_provisioning.a .pio/build/lolin32/esp-idf/app_update/libapp_update.a .pio/build/lolin32/esp-idf/bootloader_support/libbootloader_support.a .pio/build/lolin32/esp-idf/cxx/libcxx.a .pio/build/lolin32/esp-idf/driver/libdriver.a .pio/build/lolin32/esp-idf/efuse/libefuse.a .pio/build/lolin32/esp-idf/esp-tls/libesp-tls.a .pio/build/lolin32/esp-idf/esp_adc/libesp_adc.a .pio/build/lolin32/esp-idf/esp_app_format/libesp_app_format.a .pio/build/lolin32/esp-idf/esp_bootloader_format/libesp_bootloader_format.a .pio/build/lolin32/esp-idf/esp_coex/libesp_coex.a .pio/build/lolin32/esp-idf/esp_common/libesp_common.a .pio/build/lolin32/esp-idf/esp_eth/libesp_eth.a .pio/build/lolin32/esp-idf/esp_event/libesp_event.a .pio/build/lolin32/esp-idf/esp_gdbstub/libesp_gdbstub.a .pio/build/lolin32/esp-idf/esp_http_client/libesp_http_client.a .pio/build/lolin32/esp-idf/esp_http_server/libesp_http_server.a .pio/build/lolin32/esp-idf/esp_https_ota/libesp_https_ota.a .pio/build/lolin32/esp-idf/esp_hw_support/libesp_hw_support.a .pio/build/lolin32/esp-idf/esp_mm/libesp_mm.a .pio/build/lolin32/esp-idf/esp_netif/libesp_netif.a .pio/build/lolin32/esp-idf/esp_partition/libesp_partition.a .pio/build/lolin32/esp-idf/esp_phy/libesp_phy.a .pio/build/lolin32/esp-idf/esp_pm/libesp_pm.a .pio/build/lolin32/esp-idf/esp_ringbuf/libesp_ringbuf.a .pio/build/lolin32/esp-idf/esp_rom/libesp_rom.a .pio/build/lolin32/esp-idf/esp_system/libesp_system.a .pio/build/lolin32/esp-idf/esp_timer/libesp_timer.a .pio/build/lolin32/esp-idf/esp_wifi/libesp_wifi.a .pio/build/lolin32/esp-idf/freertos/libfreertos.a .pio/build/lolin32/esp-idf/hal/libhal.a .pio/build/lolin32/esp-idf/heap/libheap.a .pio/build/lolin32/esp-idf/http_parser/libhttp_parser.a .pio/build/lolin32/esp-idf/log/liblog.a .pio/build/lolin32/esp-idf/lwip/liblwip.a .pio/build/lolin32/esp-idf/mbedtls/libmbedtls.a .pio/build/lolin32/esp-idf/newlib/libnewlib.a .pio/build/lolin32/esp-idf/nvs_flash/libnvs_flash.a .pio/build/lolin32/esp-idf/pthread/libpthread.a .pio/build/lolin32/esp-idf/soc/libsoc.a .pio/build/lolin32/esp-idf/spi_flash/libspi_flash.a .pio/build/lolin32/esp-idf/tcp_transport/libtcp_transport.a .pio/build/lolin32/esp-idf/vfs/libvfs.a .pio/build/lolin32/esp-idf/wpa_supplicant/libwpa_supplicant.a .pio/build/lolin32/esp-idf/mbedtls/mbedtls/3rdparty/everest/libeverest.a .pio/build/lolin32/esp-idf/mbedtls/mbedtls/library/libmbedcrypto.a .pio/build/lolin32/esp-idf/mbedtls/mbedtls/library/libmbedtls.a .pio/build/lolin32/esp-idf/mbedtls/mbedtls/library/libmbedx509.a .pio/build/lolin32/esp-idf/mbedtls/mbedtls/3rdparty/p256-m/libp256m.a -lcore -lespnow -lmesh -lnet80211 -lpp -lsmartconfig -lwapi -lxt_hal -lc -lm -lstdc++ -lgcc -lphy -lrtc -Wl,--end-group
+<lambda>(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+MethodWrapper(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [          ]   3.4% (used 11028 bytes from 327680 bytes)
+Flash: [==        ]  17.1% (used 179497 bytes from 1048576 bytes)
+.pio/build/lolin32/firmware.elf  :
+...
+Total                  2694633
+"~/.platformio/penv/bin/python" "~/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 elf2image --flash_mode dio --flash_freq 40m --flash_size 4MB --elf-sha256-offset 0xb0 -o .pio/build/lolin32/firmware.bin .pio/build/lolin32/firmware.elf
+esptool.py v4.5.1
+Creating esp32 image...
+Merged 2 ELF sections
+Successfully created esp32 image.
+[SUCCESS] Took 32.57 seconds
+```
+
+Les outils utilisés ici (dans `~/.platformio/packages/`) par PlaformIO sont :
+
+- `framework-espidf`
+- `tool-cmake`
+- `tool-esptoolpy`
+- `tool-ninja`
+- `tool-xtensa-esp-elf-gdb`
+- `toolchain-esp32ulp`
+- `toolchain-xtensa-esp-elf`
+
+La chaîne de développement `xtensa-esp32` (pour les 2 cœurs Tensilica LX6 32 bits de l'ESP32) fournit notamment les compilateurs C++ `xtensa-esp32-elf-g++` et C `xtensa-esp32-elf-gcc`. Ils servent à compiler le fichier source `src/main.c` et l'ensemble du framework `framework-espidf`. Les fichiers objets `.o` produits sont stockés dans l'arborescence `.pio/build/lolin32/`.
+
+```sh
+$ ls -l .pio/build/lolin32/src/
+-rw-rw-r-- 1 tv tv 19420 juil.  7 10:32 main.c.o
+
+$ $ file .pio/build/lolin32/src/main.c.o 
+.pio/build/lolin32/src/main.c.o: ELF 32-bit LSB relocatable, Tensilica Xtensa, version 1 (SYSV), with debug_info, not stripped
+
+$ ls -l .pio/build/lolin32/esp_*/src
+...
+```
+
+L'utilitaire `xtensa-esp32-elf-ar` crée les différentes archives `.a` avec les fichiers objets `.o` et `xtensa-esp32-elf-ranlib` génère les index des archives à l'intérieur de celle-ci. L'index répertorie chaque symbole défini dans l'archive (table de symboles). Les archives `.a` sont des **[bibliothèques logicielles](https://fr.wikipedia.org/wiki/Biblioth%C3%A8que_logicielle) statiques**. L'utilitaire `xtensa-esp32-elf-nm` permet de lister la table des symboles d'une archive.
+
+> [!NOTE]
+> Une bibliothèque statique est destinée à être copiée dans le programme lors de la construction de ce dernier (c'est la phase d'édition de liens).
+
+```sh
+$ fdfind "\.a" .pio/build/lolin32/esp-idf/
+.pio/build/lolin32/esp-idf/app_trace/libapp_trace.a
+...
+.pio/build/lolin32/esp-idf/xtensa/libxtensa.a
+
+$ file .pio/build/lolin32/esp-idf/cxx/libcxx.a
+.pio/build/lolin32/esp-idf/cxx/libcxx.a: current ar archive
+
+$ ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-nm -s .pio/build/lolin32/esp-idf/cxx/libcxx.a
+```
+
+Ensuite, `xtensa-esp32-elf-gcc` réalise l'édition de liens pour produire le `bootloader.elf` et l'"exécutable" `firmware.elf`.
+
+> [!NOTE]
+> ELF (_Executable and Linkable Format_) est un format de fichier binaire utilisé pour l'enregistrement de code compilé. Il est par exemple utilisé dans la plupart des systèmes d'exploitation de type Unix comme GNU/Linux.
+
+L'utilitaire `esptool.py` finalise le processus de fabrication en produisant le fichier `firmware.bin` à partir de `firmware.elf`. C'est le fichier `firmware.bin` qui sera "téléversé" (_upload_) vers l'ESP32.
+
+```sh
+$ ls -l .pio/build/lolin32/*.elf
+-rwxrwxr-x 1 tv tv  484836 juil.  7 10:32 .pio/build/lolin32/bootloader.elf
+-rwxrwxr-x 1 tv tv 2781016 juil.  7 10:33 .pio/build/lolin32/firmware.elf
+
+$ ls -l .pio/build/lolin32/*.bin
+-rw-rw-r-- 1 tv tv  26720 juil.  7 10:32 .pio/build/lolin32/bootloader.bin
+-rw-rw-r-- 1 tv tv 179856 juil.  7 10:33 .pio/build/lolin32/firmware.bin
+-rw-rw-r-- 1 tv tv   3072 juil.  7 10:32 .pio/build/lolin32/partitions.bin
+
+$ file .pio/build/lolin32/firmware.elf
+.pio/build/lolin32/firmware.elf: ELF 32-bit LSB executable, Tensilica Xtensa, version 1 (SYSV), statically linked, with debug_info, not stripped
+
+$ $ ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-size -B -d .pio/build/lolin32/firmware.elf
+   text	   data	    bss	    dec	    hex	filename
+ 132065	  47688	   2265	 182018	  2c702	.pio/build/lolin32/firmware.elf
+
+$ ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-objdump -f .pio/build/lolin32/firmware.elf
+
+.pio/build/lolin32/firmware.elf:     file format elf32-xtensa-le
+architecture: xtensa, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0x400816a8
+```
+
+> [!NOTE]
+> Un [firmware](https://fr.wikipedia.org/wiki/Firmware) (ou micrologiciel, microprogramme, microcode, logiciel interne ou encore logiciel embarqué) est un programme intégré dans un matériel informatique, ici l'ESP32, pour qu'il puisse fonctionner.
+
+### Flash
+
+Téléversement (_upload_) :
+
+```sh
+$ pio run -e lolin32 -t upload -v
+Processing lolin32 (platform: espressif32; board: lolin32; framework: espidf)
+
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/lolin32.html
+PLATFORM: Espressif 32 (6.7.0) > WEMOS LOLIN32
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-espidf @ 3.50201.240515 (5.2.1) 
+ - tool-cmake @ 3.16.4 
+ - tool-esptoolpy @ 1.40501.0 (4.5.1) 
+ - tool-mkfatfs @ 2.0.1 
+ - tool-mklittlefs @ 1.203.210628 (2.3) 
+ - tool-mkspiffs @ 2.230.0 (2.30) 
+ - tool-ninja @ 1.7.1 
+ - tool-riscv32-esp-elf-gdb @ 12.1.0+20221002 
+ - tool-xtensa-esp-elf-gdb @ 12.1.0+20221002 
+ - toolchain-esp32ulp @ 1.23500.220830 (2.35.0) 
+ - toolchain-xtensa-esp-elf @ 13.2.0+20230928
+Reading CMake configuration...
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 0 compatible libraries
+Scanning dependencies...
+No dependencies
+Building in release mode
+<lambda>(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+MethodWrapper(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [          ]   3.4% (used 11028 bytes from 327680 bytes)
+Flash: [==        ]  17.1% (used 179497 bytes from 1048576 bytes)
+.pio/build/lolin32/firmware.elf  :
+section                   size         addr
+...
+Total                  2694633
+<lambda>(["upload"], [".pio/build/lolin32/firmware.bin"])
+AVAILABLE: cmsis-dap, esp-bridge, esp-prog, espota, esptool, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa
+CURRENT: upload_protocol = esptool
+BeforeUpload(["upload"], [".pio/build/lolin32/firmware.bin"])
+Auto-detected: /dev/ttyUSB0
+"~/.platformio/penv/bin/python" "~/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 --port "/dev/ttyUSB0" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32/bootloader.bin 0x8000 ~/Documents/git/bts-lasalle-avignon-ressources/PlatformIO/src/espidf-esp32/.pio/build/lolin32/partitions.bin 0x10000 .pio/build/lolin32/firmware.bin
+esptool.py v4.5.1
+Serial port /dev/ttyUSB0
+Connecting....
+Chip is ESP32-D0WDQ6 (revision v1.0)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: 24:62:ab:f2:5a:18
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00001000 to 0x00007fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Flash will be erased from 0x00010000 to 0x0003bfff...
+Compressed 26720 bytes to 16351...
+Writing at 0x00001000... (100 %)
+Wrote 26720 bytes (16351 compressed) at 0x00001000 in 0.7 seconds (effective 311.2 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 103...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.1 seconds (effective 396.6 kbit/s)...
+Hash of data verified.
+Compressed 179856 bytes to 95934...
+Writing at 0x00010000... (16 %)
+Writing at 0x0001c481... (33 %)
+Writing at 0x00021fdd... (50 %)
+Writing at 0x00027b1d... (66 %)
+Writing at 0x00030a4f... (83 %)
+Writing at 0x00036446... (100 %)
+Wrote 179856 bytes (95934 compressed) at 0x00010000 in 2.6 seconds (effective 559.1 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+[SUCCESS] Took 8.58 seconds
+```
+
+Par défaut, PlatformIO utilise l'utilitaire `esptool.py` pour écrire dans la mémoire FLASH (`write_flash`) l'ensemble des fichiers nécessaires à l'exécutation du programme `firmware.bin` sur l'ESP32 :
+
+| Adresse |     Fichier      | Description                         |
+| ------- | :--------------: | ----------------------------------- |
+| 0x1000  |  bootloader.bin  | Le chargeur d'amorçage de l'ESP32   |
+| 0x8000  |  partitions.bin  | Le partitionnement de la mémoire    |
+| 0xe000  |  boot_app0.bin   | Le chargeur du programme exécutable |
+| 0x10000 | **firmware.bin** | Le programme exécutable             |
+
+A la fin, l'utilitaire `esptool.py` effectue un _reset_ (`hard_reset`) de la carte ESP32. L'ESP32 reboote et exécute le programme `firmware.bin`.
+
+On peut monitorer l'exécution du programme sur le port série virtuel :
+
+```sh
+$ pio device monitor --baud 115200 --port /dev/ttyUSB0
+--- Terminal on /dev/ttyUSB0 | 115200 8-N-1
+--- Available filters and text transformations: colorize, debug, default, direct, esp32_exception_decoder, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ets Jun  8 2016 00:22:57
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7172
+load:0x40078000,len:15540
+load:0x40080400,len:4
+ho 8 tail 4 room 4
+load:0x40080404,len:3904
+entry 0x40080638
+␛[0;32mI (31) boot: ESP-IDF 5.2.1 2nd stage bootloader␛[0m
+␛[0;32mI (31) boot: compile time Jul  7 2024 18:52:26␛[0m
+␛[0;32mI (31) boot: Multicore bootloader␛[0m
+␛[0;32mI (35) boot: chip revision: v1.0␛[0m
+␛[0;32mI (39) boot.esp32: SPI Speed      : 40MHz␛[0m
+␛[0;32mI (44) boot.esp32: SPI Mode       : DIO␛[0m
+␛[0;32mI (48) boot.esp32: SPI Flash Size : 4MB␛[0m
+␛[0;32mI (53) boot: Enabling RNG early entropy source...␛[0m
+␛[0;32mI (58) boot: Partition Table:␛[0m
+␛[0;32mI (62) boot: ## Label            Usage          Type ST Offset   Length␛[0m
+␛[0;32mI (69) boot:  0 nvs              WiFi data        01 02 00009000 00006000␛[0m
+␛[0;32mI (76) boot:  1 phy_init         RF data          01 01 0000f000 00001000␛[0m
+␛[0;32mI (84) boot:  2 factory          factory app      00 00 00010000 00100000␛[0m
+␛[0;32mI (91) boot: End of partition table␛[0m
+␛[0;32mI (96) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=099a4h ( 39332) map␛[0m
+␛[0;32mI (117) esp_image: segment 1: paddr=000199cc vaddr=3ffb0000 size=02254h (  8788) load␛[0m
+␛[0;32mI (121) esp_image: segment 2: paddr=0001bc28 vaddr=40080000 size=043f0h ( 17392) load␛[0m
+␛[0;32mI (130) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=13b50h ( 80720) map␛[0m
+␛[0;32mI (159) esp_image: segment 4: paddr=00033b78 vaddr=400843f0 size=08360h ( 33632) load␛[0m
+␛[0;32mI (179) boot: Loaded app from partition at offset 0x10000␛[0m
+␛[0;32mI (179) boot: Disabling RNG early entropy source...␛[0m
+␛[0;32mI (191) cpu_start: Multicore app␛[0m
+␛[0;32mI (199) cpu_start: Pro cpu start user code␛[0m
+␛[0;32mI (199) cpu_start: cpu freq: 240000000 Hz␛[0m
+␛[0;32mI (200) cpu_start: Application information:␛[0m
+␛[0;32mI (203) cpu_start: Project name:     espidf-esp32␛[0m
+␛[0;32mI (208) cpu_start: App version:      964c37f-dirty␛[0m
+␛[0;32mI (213) cpu_start: Compile time:     Jul  7 2024 18:52:07␛[0m
+␛[0;32mI (219) cpu_start: ELF file SHA256:  2d39f0a90...␛[0m
+␛[0;32mI (225) cpu_start: ESP-IDF:          5.2.1␛[0m
+␛[0;32mI (230) cpu_start: Min chip rev:     v0.0␛[0m
+␛[0;32mI (234) cpu_start: Max chip rev:     v3.99 ␛[0m
+␛[0;32mI (239) cpu_start: Chip rev:         v1.0␛[0m
+␛[0;32mI (244) heap_init: Initializing. RAM available for dynamic allocation:␛[0m
+␛[0;32mI (251) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM␛[0m
+␛[0;32mI (257) heap_init: At 3FFB2B18 len 0002D4E8 (181 KiB): DRAM␛[0m
+␛[0;32mI (263) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM␛[0m
+␛[0;32mI (270) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM␛[0m
+␛[0;32mI (276) heap_init: At 4008C750 len 000138B0 (78 KiB): IRAM␛[0m
+␛[0;32mI (284) spi_flash: detected chip: generic␛[0m
+␛[0;32mI (287) spi_flash: flash io: dio␛[0m
+␛[0;32mI (292) main_task: Started on CPU0␛[0m
+␛[0;32mI (302) main_task: Calling app_main()␛[0m
+␛[0;32mI (302) app_main: Hello world!␛[0m
+␛[0;32mI (302) app_main: Chip : esp32␛[0m
+␛[0;32mI (302) app_main: CPU freq : 240 MHz ␛[0m
+␛[0;32mI (302) app_main: CPU cores : 2␛[0m
+```
+
+### Partitions
+
+La mémoire _flash_ de l'ESP32 est partitionnée.
+
+> La mémoire flash est découpée en secteurs d'une taille de 4 kB. Les partitions peuvent être cryptées (`encrypted`) et en lecteur seule (`readonly`)
+
+La table de partition se situe à l'offset `0x8000` par défaut et elle fournit les informations sur le découpage de la mémoire non-volatile.
+
+Elle occupe un secteur (4096 octets) qui permet d'y stocker 95 entrées max et une somme de contrôle MD5 pour vérifier son intégrité.
+
+> [!TIP]
+> Le _framework__ fournit un outil `parttool.py` pour effectuer des opérations liées aux partitions :
+> - lire une partition et enregistrer le contenu dans un fichier (read_partition)
+> - écrire le contenu d'un fichier sur une partition (_write_partition_)
+> - effacer une partition (_erase_partition_)
+> - récupérer des informations telles que le nom, le décalage, la taille et l'indicateur d'une partition donnée (_get_partition_info_)
+
+Le [partitionnement](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/partition-tables.html) de la mémoire flash a été défini avec la commande `pio run -t menuconfig` :
+
+![](images/menuconfig-partition-table.png)
+
+> cf. ~/.platformio/packages/framework-espidf/components/partition_table/
+
+```sh
+$ cat ~/.platformio/packages/framework-espidf/components/partition_table/partitions_singleapp.csv
+# Name,   Type, SubType, Offset,  Size, Flags
+# Note: if you have increased the bootloader size, make sure to update the offsets to avoid overlap
+nvs,      data, nvs,     ,        0x6000,
+phy_init, data, phy,     ,        0x1000,
+factory,  app,  factory, ,        1M,
+```
+
+> Il existe d'autres partitionnements disponibles. On utilisera le paramétre `board_build.partitions` dans `platformio.ini` pour changer de format.
+
+Les partitions sont de deux types : `app` ou `data`.
+
+Les partitions `app` peuvent avoir le sous-type `factory` (le type par défaut pour les _firmwares_) ou `ota_x` (x de `0` à `15`).
+
+> [!NOTE]
+> [OTA](https://fr.wikipedia.org/wiki/Over-the-air_programming) (_Over The Air_) est un mécanisme de mise à jour du _firmware_ par transfert de données à distance (via WiFi, Bluetooth ou Ethernet).
+
+[OTA](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html) nécessite de configurer les tables de partition avec au moins deux partitions d'emplacement d'application OTA (`ota_0` et `ota_1`) et une partition de données OTA (`otadata`).
+
+Les partitions `data` peuvent avoir de nombreux sous-types : `nvs`, `ota`, `spiffs`, `coredump`, ...
+
+Le fichier `default.csv` a été converti au format `.bin` par l'utilitaire `gen_esp32part.py` :
+
+```sh
+$ ls -l .pio/build/lolin32/partitions.bin
+-rw-rw-r-- 1 tv tv 3072 juil.  7 10:32 .pio/build/lolin32/partitions.bin
+
+$ python3 ~/.platformio/packages/framework-espidf/components/partition_table/gen_esp32part.py .pio/build/lolin32/partitions.bin
+Parsing binary partition input...
+Verifying table...
+# ESP-IDF Partition Table
+# Name, Type, SubType, Offset, Size, Flags
+nvs,data,nvs,0x9000,24K,
+phy_init,data,phy,0xf000,4K,
+factory,app,factory,0x10000,1M,
+```
+
+Ce qui donne le partionnement suivant :
+
+|  Mémoire flash  |
+| :-------------: |
+|   bootloader    |
+| partition_table |
+|    nvs (24K)    |
+|    app (1M)     |
+
+Le _firmware_ (`app`) doit être stocké à l'_offset_ `0x10000` pour être chargé par le _bootloader_ (par défaut).
+
+La partition [NVS](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html) (_Non-Volatile Storage_) est utilisée pour stocker des données de configuration (WiFi, Bluetooth, ...) dans la mémoire falsh (non volatile). La partition `nvs` est aussi utilisé pour stocker des certificats ou des données sensibles car elle prend en charge le cryptage (cf. la partition `nvs_keys` pour y stocker les clés). La taille recommandée pour cette partition est de 12 kB à 64 kB (par défaut 24 kB). Il est recommandé d'utiliser un système de fichiers FAT ou SPIFFS pour le stockage de plus grandes quantités de données.
+
+L'ESP32 supporte trois systèmes de fichiers (pour les partitions de type `data`) :
+
+- `fat` ([FAT Filesystem Support](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/fatfs.html))
+- `spiffs` ([SPIFFS Filesystem](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/spiffs.html))
+- `littlefs` ([LittleFS filesystem](https://github.com/littlefs-project/littlefs))
+
+> Il est aussi possible de personnaliser son partitionnement.
+
+### Voir aussi
+
+Il existe une extension pour VSCode :
+
+![](images/extension-esp-idf.png)
+
 ## Débugueur
 
 Lien : https://docs.platformio.org/en/stable/plus/debugging.html
@@ -1731,6 +2342,8 @@ drwx------ 8 tv tv 4096 juil.  6 08:57 tool-jlink
 
 On configurera le fichier de projet `platformio.ini` pour utiliser [J-Link SEGGER](https://registry.platformio.org/tools/platformio/tool-jlink/installation) et l'interface JTAG SAM-ICE :
 
+- pour le _framework_ `arduino` :
+
 ```ini
 [env:esp32_debug]
 build_flags = -DDEBUG -D$PIOENV
@@ -1742,11 +2355,30 @@ debug_init_break = tbreak loop
 ;build_type = debug
 ```
 
+- pour le _framework_ `espidf` :
+
+```ini
+[env:lolin32]
+platform = espressif32
+board = lolin32
+framework = espidf
+build_flags = -DDEBUG
+debug_tool = jlink
+; choisir son point d'arrêt initial
+debug_init_break = break app_main
+;debug_init_break = break main.c:52
+;build_type = debug
+```
+
 > cf. https://docs.platformio.org/en/stable/plus/debug-tools/custom.html
 
 Ensuite, il suffit demarrer une session de débogage :
 
 ![](images/demarrer-debogage.png)
+
+On obtient un session de débogage pour le _framework_ `espidf` :
+
+![](images/debogage-espidf.png)
 
 ### OpenOCD
 
@@ -1804,7 +2436,7 @@ Démarrer le débogage :
 
 ![](images/pio-debug-2.png)
 
-Une session de débogage dans l'IDE :
+Une session de débogage dans l'IDE pour le _framework_ `arduino` :
 
 ![](images/screenshot-debug.png)
 
@@ -1899,7 +2531,7 @@ Thread 1 "loopTask" hit Temporary breakpoint 1, loop () at src/main.cpp:42
 (gdb) 
 ```
 
-Quelques commandes de base de `ggb` :
+Quelques commandes de base de `gdb` :
 
 ```txt
 # Informations
