@@ -1641,6 +1641,26 @@ framework = espidf
 
 Lien : https://docs.platformio.org/en/stable/plus/debugging.html
 
+Un débogueur (ou débugueur, de l’anglais _debugger_) est un logiciel qui aide un développeur à analyser les _bugs_ d’un programme.
+
+Pour cela, il permet d’exécuter le programme pas-à-pas, d’afﬁcher la valeur des
+variables à tout moment, de mettre en place des points d’arrêt sur des conditions ou
+sur des lignes du programme ...
+
+Le programme à débuguer est exécuté à travers le débogueur et s’exécute
+normalement. Le débogueur offre alors au programmeur la possibilité d’observer et
+de contrôler l’exécution du programme.
+
+[GNU Debugger](https://www.gnu.org/software/gdb/), également appelé `gdb`, est le débogueur standard du projet GNU. Il
+est portable sur de nombreux systèmes type Unix et fonctionne pour plusieurs
+langages de programmation, comme le C et le C++. Il fut écrit par Richard Stallman
+en 1988. `gdb` est un logiciel libre, distribué sous la licence GNU GPL.
+
+L’interface de `gdb` est une simple ligne de commande, mais il est souvent invoqué en
+arrière-plan par les environnements de développement intégré.
+
+Lien : https://www.gnu.org/software/gdb/
+
 ### JTAG
 
 Le terme [JTAG](https://fr.wikipedia.org/wiki/Joint_Test_Action_Group) (pour Joint Test Action Group), désignant le groupe de travail qui a conçu la norme, est abusivement (mais très largement) utilisé au lieu du terme générique _Boundary Scan_ ou du sigle TAP (_Test Access Port_,  port d'accès de test).
@@ -1877,6 +1897,35 @@ Info : [esp32.cpu1] Target halted, PC=0x400D1648, debug_reason=00000001
 Thread 1 "loopTask" hit Temporary breakpoint 1, loop () at src/main.cpp:42
 42	{
 (gdb) 
+```
+
+Quelques commandes de base de `ggb` :
+
+```txt
+# Informations
+(gdb) info stack
+(gdb) info program
+(gdb) show endian
+
+# Démarrer le débugage
+(gdb) start
+# Lancer le programme
+(gdb) run
+
+# Ajouter un point d’arrêt sur une ligne
+(gdb) break 23
+(gdb) run
+# Pas à pas
+(gdb) step
+# Pas à pas
+(gdb) next
+# Continuer
+(gdb) continue
+
+# Arrêter le débugage
+(gdb) kill
+# Quitter gdb
+(gdb) quit
 ```
 
 ### ESP-PROG
