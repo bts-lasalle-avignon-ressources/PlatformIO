@@ -2562,9 +2562,67 @@ Quelques commandes de base de `gdb` :
 
 ### ESP-PROG
 
-Lien : https://docs.platformio.org/en/latest/plus/debug-tools/esp-prog.html
+[ESP-Prog](https://docs.platformio.org/en/latest/plus/debug-tools/esp-prog.html) est l'un des outils de développement et de débogage d'Espressif pour l'ESP32 permettant notamment le débogage en ligne JTAG.
 
-TODO
+![](images/esp-prog-jtag.png)
+
+Liens :
+
+- https://docs.espressif.com/projects/esp-iot-solution/en/latest/hw-reference/ESP-Prog_guide.html
+- https://docs.espressif.com/projects/esp-dev-kits/en/latest/other/esp-prog/user_guide.html
+
+Dans [PlatformIO](https://docs.platformio.org/en/latest/plus/debug-tools/esp-prog.html), il suffit de modifier le fichier de projet `platfomio.ini` pour intégrer :
+
+```ini
+;upload_protocol = esp-prog
+debug_tool = esp-prog
+; choisir son point d'arrêt initial
+;debug_init_break = break setup
+;debug_init_break = tbreak loop
+;debug_init_break = break main.cpp:22
+;build_type = debug
+```
+
+> [!TIP]
+> Il est possible d'utiliser ESP-Prog pour téléverser le _firmware_ en ajoutant : `upload_protocol = esp-prog`
+
+Branchement :
+
+| ESP32 Pin | JTAG Signal | Broche JTAG |
+| :-------: | :---------: | :---------: |
+|  GPIO15   |     TDO     |      6      |
+|  GPIO12   |     TDI     |      8      |
+|  GPIO13   |     TCK     |      4      |
+|  GPIO14   |     TMS     |      2      |
+|    GND    |     GND     |      3      |
+
+![](images/esp-prog-jtag-brochage.png)
+
+> [!TIP]
+> Il est inutile de relier VCC.
+
+Détection :
+
+```sh
+$ sudo dmesg
+...
+[2595778.568440] usb 1-6.3: new high-speed USB device number 32 using xhci_hcd
+[2595778.680681] usb 1-6.3: New USB device found, idVendor=0403, idProduct=6010, bcdDevice= 7.00
+[2595778.680688] usb 1-6.3: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[2595778.680691] usb 1-6.3: Product: Dual RS232-HS
+[2595778.680693] usb 1-6.3: Manufacturer: FTDI
+[2595778.715925] usbcore: registered new interface driver ftdi_sio
+[2595778.715939] usbserial: USB Serial support registered for FTDI USB Serial Device
+[2595778.716005] ftdi_sio 1-6.3:1.0: FTDI USB Serial Device converter detected
+[2595778.716041] usb 1-6.3: Detected FT2232H
+...
+```
+
+Une session de débogage avec l'ESP-Prog :
+
+![](images/debogage-esp-prog.png)
+
+Tutoriel : [Déboguer un ESP32-WROOM sous PlatformIO via son interface JTAG](https://tutoduino.fr/tutoriels/debug-esp32/debug-esp32-platformio-jtag/)
 
 ### USB OTG (ESP32-S3)
 
