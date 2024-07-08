@@ -45,7 +45,7 @@
     - [J-Link SEGGER](#j-link-segger)
     - [OpenOCD](#openocd)
     - [ESP-PROG](#esp-prog)
-    - [ESP32-S3](#esp32-s3)
+    - [USB OTG (ESP32-S3)](#usb-otg-esp32-s3)
   - [Tests unitaires (Unity)](#tests-unitaires-unity)
   - [Test distant](#test-distant)
   - [Intégration continue (GitHub Actions)](#intégration-continue-github-actions)
@@ -2566,9 +2566,305 @@ Lien : https://docs.platformio.org/en/latest/plus/debug-tools/esp-prog.html
 
 TODO
 
-### ESP32-S3
+### USB OTG (ESP32-S3)
 
-TODO
+Le module [ESP32-S3-DevKitC-1](https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html) est une carte de développement équipée de l'ESP32-S3-WROOM-1.
+
+![](images/esp32-s3.png)
+
+L'ESP32-S3-WROOM-1 est basé sur un processeur dual-core LX7 32 bits à 240 MHz. La mémoire Flash est de 16 MB.
+
+Le module est notamment équipé :
+
+- d'un port USB [OTG](https://fr.wikipedia.org/wiki/USB_On-The-Go) qui permet le **débogage JTAG**
+- d'une LED RVB sur GPIO38 (il faut braser le pont sur la carte)
+
+![](images/esp32-s3-details.jpg)
+
+Liens :
+
+- https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+- https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf
+- https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/get-started/index.html
+- https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/get-started/linux-macos-setup.html#get-started-linux-macos-first-steps
+
+Détection (port USB To Serial) :
+
+```sh
+$ sudo dmesg
+[2532696.311448] usb 1-6.4: new full-speed USB device number 39 using xhci_hcd
+[2532696.433296] usb 1-6.4: New USB device found, idVendor=1a86, idProduct=55d3, bcdDevice= 4.45
+[2532696.433302] usb 1-6.4: New USB device strings: Mfr=0, Product=2, SerialNumber=3
+[2532696.433305] usb 1-6.4: Product: USB Single Serial
+[2532696.433307] usb 1-6.4: SerialNumber: 589B040494
+[2532696.441693] cdc_acm 1-6.4:1.0: ttyACM1: USB ACM device
+
+$ lsusb
+...
+Bus 001 Device 039: ID 1a86:55d3 QinHeng Electronics USB Single Serial
+
+$ esptool.py --port /dev/ttyACM1 --chip esp32-s3 flash_id
+esptool.py v4.5.1
+Serial port /dev/ttyACM1
+Connecting....
+Chip is ESP32-S3 (revision v0.2)
+Features: WiFi, BLE
+Crystal is 40MHz
+MAC: cc:8d:a2:0c:7f:e8
+Uploading stub...
+Running stub...
+Stub running...
+Manufacturer: 68
+Device: 4018
+Detected flash size: 16MB
+Flash type set in eFuse: quad (4 data lines)
+Hard resetting via RTS pin...
+```
+
+Détection (port USB [OTG](https://fr.wikipedia.org/wiki/USB_On-The-Go)) :
+
+```sh
+$ sudo dmesg
+...
+[2532556.028426] usb 1-6.4: new full-speed USB device number 38 using xhci_hcd
+[2532556.150287] usb 1-6.4: New USB device found, idVendor=303a, idProduct=4001, bcdDevice= 1.00
+[2532556.150294] usb 1-6.4: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[2532556.150296] usb 1-6.4: Product: Espressif Device
+[2532556.150299] usb 1-6.4: Manufacturer: Espressif Systems
+[2532556.150301] usb 1-6.4: SerialNumber: 123456
+[2532556.158149] cdc_acm 1-6.4:1.0: ttyACM1: USB ACM device
+
+$ lsusb
+...
+Bus 001 Device 038: ID 303a:4001 Espressif Systems Espressif Device
+```
+
+Recherche de la carte :
+
+```sh
+$ $ pio boards esp32-s3
+
+Platform: espressif32
+===============================================================================================================================================================================================
+ID                                   MCU      Frequency    Flash    RAM    Name
+-----------------------------------  -------  -----------  -------  -----  ---------------------------------------------------
+...
+esp32s3_powerfeather                 ESP32S3  240MHz       8MB      320KB  ESP32-S3 PowerFeather
+esp32s3box                           ESP32S3  240MHz       16MB     320KB  Espressif ESP32-S3-Box
+esp32-s3-devkitc-1                   ESP32S3  240MHz       8MB      320KB  Espressif ESP32-S3-DevKitC-1-N8 (8 MB QD, No PSRAM)
+esp32-s3-devkitm-1                   ESP32S3  240MHz       8MB      320KB  Espressif ESP32-S3-DevKitM-1
+esp32s3usbotg                        ESP32S3  240MHz       8MB      320KB  Espressif ESP32-S3-USB-OTG
+...
+```
+
+L'ID `esp32-s3-devkitc-1` fait référence au module ESP32-S3-DevKitC-1-N8 et celui qui est testé ici est le **ESP32-S3-DevKitC-1-N16R8** avec **16 MB* de mémoire _flash_ !
+
+Configuration du projet :
+
+```sh
+$ pio project init --board esp32-s3-devkitc-1 --project-option="framework=arduino"
+```
+
+La carte `esp32-s3-devkitc-1` est définie par le fichier `esp32-s3-devkitc-1.json` dans `~/.platformio/platforms/espressif32/boards/`.
+
+Il faut créer le fichier `esp32-s3-devkitc-1-n16r8v.json` :
+
+```sh
+$ vim ~/.platformio/platforms/espressif32/boards/esp32-s3-devkitc-1-n16r8v.json
+{
+    "build": {
+      "arduino":{
+        "ldscript": "esp32s3_out.ld",
+        "partitions": "default_16MB.csv",
+        "memory_type": "qio_opi"
+      },
+      "core": "esp32",
+      "extra_flags": [
+        "-DARDUINO_ESP32S3_DEV",
+        "-DBOARD_HAS_PSRAM",
+        "-DARDUINO_USB_MODE=1",
+        "-DARDUINO_USB_CDC_ON_BOOT=1"
+      ],
+      "f_cpu": "240000000L",
+      "f_flash": "80000000L",
+      "flash_mode": "qio",
+      "psram_type": "opi",
+      "hwids": [
+        [
+          "0x303A",
+          "0x1001"
+        ]
+      ],
+      "mcu": "esp32s3",
+      "variant": "esp32s3"
+    },
+    "connectivity": [
+      "wifi",
+      "bluetooth"
+    ],
+    "debug": {
+      "default_tool": "esp-builtin",
+      "onboard_tools": [
+        "esp-builtin"
+      ],
+      "openocd_target": "esp32s3.cfg"
+    },
+    "frameworks": [
+      "arduino",
+      "espidf"
+    ],
+    "name": "Espressif ESP32-S3-DevKitC-1-N16R8V (16 MB QD, 8MB PSRAM)",
+    "upload": {
+      "flash_size": "16MB",
+      "maximum_ram_size": 327680,
+      "maximum_size": 16777216,
+      "require_upload_port": true,
+      "speed": 921600
+    },
+    "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html",
+    "vendor": "Espressif"
+}
+```
+
+Puis modifier le fichier de projet `platformio.ini` :
+
+```sh
+$ cat platformio.ini
+[env:esp32-s3]
+platform = espressif32
+board = esp32-s3-devkitc-1-n16r8v
+framework = arduino
+```
+
+Mettre à jour des dépendances et des _packages_ du projet si besoin :
+
+```sh
+$ pio pkg update
+Resolving esp32-s3 dependencies...
+Already up-to-date.
+```
+
+La Led RGB est acessible sur la broche `48` définie dans `~/.platformio/packages/framework-arduinoespressif32/variants/esp32s3/pins_arduino.h`
+
+```cpp
+#ifndef Pins_Arduino_h
+#define Pins_Arduino_h
+
+#include "soc/soc_caps.h"
+#include <stdint.h>
+
+#define USB_VID 0x303a
+#define USB_PID 0x1001
+
+// Some boards have too low voltage on this pin (board design bug)
+// Use different pin with 3V and connect with 48
+// and change this setup for the chosen pin (for example 38)
+#define PIN_NEOPIXEL 48
+// BUILTIN_LED can be used in new Arduino API digitalWrite() like in Blink.ino
+static const uint8_t LED_BUILTIN = SOC_GPIO_PIN_COUNT + PIN_NEOPIXEL;
+#define BUILTIN_LED LED_BUILTIN // backward compatibility
+#define LED_BUILTIN LED_BUILTIN // allow testing #ifdef LED_BUILTIN
+// RGB_BUILTIN and RGB_BRIGHTNESS can be used in new Arduino API neopixelWrite()
+#define RGB_BUILTIN LED_BUILTIN
+#define RGB_BRIGHTNESS 64
+
+...
+
+#endif /* Pins_Arduino_h */
+```
+
+Exemple de programme [src/arduino-esp32-s3/src/main.cpp](src/arduino-esp32-s3/src/main.cpp) :
+
+```cpp
+#include <Arduino.h>
+
+uint8_t esp32RGBLed = RGB_BUILTIN;
+
+void setup()
+{
+    Serial.begin(115200);
+    Serial.println("Start setup");
+    pinMode(esp32RGBLed, OUTPUT);
+
+    Serial.print("CPU freq : ");
+    Serial.println(String(ESP.getCpuFreqMHz()) + " MHz");
+    Serial.print("CPU cores : ");
+    esp_chip_info_t out_info;
+    esp_chip_info(&out_info);
+    Serial.println(String(out_info.cores));
+    Serial.print("Flash size : ");
+    Serial.println(String(ESP.getFlashChipSize() / 1000000) + " MB");
+    Serial.print("Free RAM : ");
+    Serial.println(String((long)ESP.getFreeHeap()) + " bytes");
+    Serial.printf("PSRAM : %d MB\n", ESP.getPsramSize() / (1024 * 1024));
+    Serial.println("Setup done");
+}
+
+void loop()
+{
+    Serial.println("Start blink");
+    // Hello world!, non blink!
+    neopixelWrite(esp32RGBLed, RGB_BRIGHTNESS, 0, 0);
+    delay(1000);
+    neopixelWrite(esp32RGBLed, 0, RGB_BRIGHTNESS, 0);
+    delay(1000);
+    neopixelWrite(esp32RGBLed, 0, 0, RGB_BRIGHTNESS);
+    delay(1000);
+    neopixelWrite(esp32RGBLed, 0, 0, 0);
+}
+```
+
+```sh
+$ pio device monitor --baud 115200 --port /dev/ttyACM1
+--- Terminal on /dev/ttyACM1 | 115200 8-N-1
+--- Available filters and text transformations: colorize, debug, default, direct, esp32_exception_decoder, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce3808,len:0x4bc
+load:0x403c9700,len:0xbd8
+load:0x403cc700,len:0x2a0c
+entry 0x403c98d0
+Start setup
+CPU freq : 240 MHz
+CPU cores : 2
+Flash size : 16 MB
+Free RAM : 370876 bytes
+PSRAM : 7 MB
+Setup done
+Start blink
+Start blink
+...
+```
+
+Le débogage de la carte ESP32-S3 est pris en charge directement via le port USB OTG :
+
+```ini
+[env:esp32-s3]
+platform = espressif32
+board = esp32-s3-devkitc-1-n16r8v
+framework = arduino
+board_build.arduino.memory_type = qio_opi
+board_build.flash_mode = qio
+board_build.prsam_type = opi
+board_upload.flash_size = 16MB
+board_upload.maximum_size = 16777216
+board_build.extra_flags = -DBOARD_HAS_PSRAM
+;upload_port = /dev/ttyACM1
+;debug_tool = esp-builtin
+;debug_init_break = hbreak setup
+debug_init_break = thbreak loop
+;debug_port = /dev/ttyACM2
+```
+
+> On peut placer un point d'arrêt matériel sur la fonction `loop()` avec `thbreak loop`.
+
+![](images/debogage-esp32s3.png)
 
 ## Tests unitaires (Unity)
 
