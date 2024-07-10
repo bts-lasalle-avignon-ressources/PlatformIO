@@ -3341,6 +3341,34 @@ esp32_test     test_esp32  PASSED    00:00:05.397
 3 test cases: 3 succeeded in 00:00:05.397
 ```
 
+On peut ajouter un _workflow_ pour effectuer les tests distants (on intègre le _token_ `PLATFORMIO_AUTH_TOKEN`) :
+
+```yaml
+name: PlatformIO Remote
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PlatformIO
+        uses: n-vr/setup-platformio-action@v1
+
+      - name: Run tests on the embedded target
+        env:
+            PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
+        run: |
+          cd src/arduino-esp32-tests && pio remote test -e esp32_test -v
+```
+
 Tutoriel : https://piolabs.com/blog/insights/unit-testing-part-3.html
 
 ## Auteurs
