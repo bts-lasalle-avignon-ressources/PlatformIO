@@ -1,0 +1,23 @@
+name: Build PlatformIO Remote
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PlatformIO
+        uses: n-vr/setup-platformio-action@v1
+
+      - name: Run tests on the embedded target
+        env:
+            PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
+        run: |
+          cd src/arduino-esp32-tests && pio remote test -e esp32_test -v
