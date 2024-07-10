@@ -1,4 +1,4 @@
-name: Build PlatformIO Remote
+name: PlatformIO Remote
 
 on:
   push:
