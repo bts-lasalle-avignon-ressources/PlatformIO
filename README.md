@@ -1,4 +1,6 @@
-![Build with PlatformIO](https://img.shields.io/badge/build%20with-PlatformIO-orange?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMjUwMCIgaGVpZ2h0PSIyNTAwIiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCI+PHBhdGggZD0iTTEyOCAwQzkzLjgxIDAgNjEuNjY2IDEzLjMxNCAzNy40OSAzNy40OSAxMy4zMTQgNjEuNjY2IDAgOTMuODEgMCAxMjhjMCAzNC4xOSAxMy4zMTQgNjYuMzM0IDM3LjQ5IDkwLjUxQzYxLjY2NiAyNDIuNjg2IDkzLjgxIDI1NiAxMjggMjU2YzM0LjE5IDAgNjYuMzM0LTEzLjMxNCA5MC41MS0zNy40OUMyNDIuNjg2IDE5NC4zMzQgMjU2IDE2Mi4xOSAyNTYgMTI4YzAtMzQuMTktMTMuMzE0LTY2LjMzNC0zNy40OS05MC41MUMxOTQuMzM0IDEzLjMxNCAxNjIuMTkgMCAxMjggMCIgZmlsbD0iI0ZGN0YwMCIvPjxwYXRoIGQ9Ik0yNDkuMzg2IDEyOGMwIDY3LjA0LTU0LjM0NyAxMjEuMzg2LTEyMS4zODYgMTIxLjM4NkM2MC45NiAyNDkuMzg2IDYuNjEzIDE5NS4wNCA2LjYxMyAxMjggNi42MTMgNjAuOTYgNjAuOTYgNi42MTQgMTI4IDYuNjE0YzY3LjA0IDAgMTIxLjM4NiA1NC4zNDYgMTIxLjM4NiAxMjEuMzg2IiBmaWxsPSIjRkZGIi8+PHBhdGggZD0iTTE2MC44NjkgNzQuMDYybDUuMTQ1LTE4LjUzN2M1LjI2NC0uNDcgOS4zOTItNC44ODYgOS4zOTItMTAuMjczIDAtNS43LTQuNjItMTAuMzItMTAuMzItMTAuMzJzLTEwLjMyIDQuNjItMTAuMzIgMTAuMzJjMCAzLjc1NSAyLjAxMyA3LjAzIDUuMDEgOC44MzdsLTUuMDUgMTguMTk1Yy0xNC40MzctMy42Ny0yNi42MjUtMy4zOS0yNi42MjUtMy4zOWwtMi4yNTggMS4wMXYxNDAuODcybDIuMjU4Ljc1M2MxMy42MTQgMCA3My4xNzctNDEuMTMzIDczLjMyMy04NS4yNyAwLTMxLjYyNC0yMS4wMjMtNDUuODI1LTQwLjU1NS01Mi4xOTd6TTE0Ni41MyAxNjQuOGMtMTEuNjE3LTE4LjU1Ny02LjcwNi02MS43NTEgMjMuNjQzLTY3LjkyNSA4LjMyLTEuMzMzIDE4LjUwOSA0LjEzNCAyMS41MSAxNi4yNzkgNy41ODIgMjUuNzY2LTM3LjAxNSA2MS44NDUtNDUuMTUzIDUxLjY0NnptMTguMjE2LTM5Ljc1MmE5LjM5OSA5LjM5OSAwIDAgMC05LjM5OSA5LjM5OSA5LjM5OSA5LjM5OSAwIDAgMCA5LjQgOS4zOTkgOS4zOTkgOS4zOTkgMCAwIDAgOS4zOTgtOS40IDkuMzk5IDkuMzk5IDAgMCAwLTkuMzk5LTkuMzk4em0yLjgxIDguNjcyYTIuMzc0IDIuMzc0IDAgMSAxIDAtNC43NDkgMi4zNzQgMi4zNzQgMCAwIDEgMCA0Ljc0OXoiIGZpbGw9IiNFNTcyMDAiLz48cGF0aCBkPSJNMTAxLjM3MSA3Mi43MDlsLTUuMDIzLTE4LjkwMWMyLjg3NC0xLjgzMiA0Ljc4Ni01LjA0IDQuNzg2LTguNzAxIDAtNS43LTQuNjItMTAuMzItMTAuMzItMTAuMzItNS42OTkgMC0xMC4zMTkgNC42Mi0xMC4zMTkgMTAuMzIgMCA1LjY4MiA0LjU5MiAxMC4yODkgMTAuMjY3IDEwLjMxN0w5NS44IDc0LjM3OGMtMTkuNjA5IDYuNTEtNDAuODg1IDIwLjc0Mi00MC44ODUgNTEuODguNDM2IDQ1LjAxIDU5LjU3MiA4NS4yNjcgNzMuMTg2IDg1LjI2N1Y2OC44OTJzLTEyLjI1Mi0uMDYyLTI2LjcyOSAzLjgxN3ptMTAuMzk1IDkyLjA5Yy04LjEzOCAxMC4yLTUyLjczNS0yNS44OC00NS4xNTQtNTEuNjQ1IDMuMDAyLTEyLjE0NSAxMy4xOS0xNy42MTIgMjEuNTExLTE2LjI4IDMwLjM1IDYuMTc1IDM1LjI2IDQ5LjM2OSAyMy42NDMgNjcuOTI2em0tMTguODItMzkuNDZhOS4zOTkgOS4zOTkgMCAwIDAtOS4zOTkgOS4zOTggOS4zOTkgOS4zOTkgMCAwIDAgOS40IDkuNCA5LjM5OSA5LjM5OSAwIDAgMCA5LjM5OC05LjQgOS4zOTkgOS4zOTkgMCAwIDAtOS4zOTktOS4zOTl6bS0yLjgxIDguNjcxYTIuMzc0IDIuMzc0IDAgMSAxIDAtNC43NDggMi4zNzQgMi4zNzQgMCAwIDEgMCA0Ljc0OHoiIGZpbGw9IiNGRjdGMDAiLz48L3N2Zz4=)
+![ESP32 PlatformIO](https://img.shields.io/badge/ESP32-PlatformIO-orange?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMjUwMCIgaGVpZ2h0PSIyNTAwIiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCI+PHBhdGggZD0iTTEyOCAwQzkzLjgxIDAgNjEuNjY2IDEzLjMxNCAzNy40OSAzNy40OSAxMy4zMTQgNjEuNjY2IDAgOTMuODEgMCAxMjhjMCAzNC4xOSAxMy4zMTQgNjYuMzM0IDM3LjQ5IDkwLjUxQzYxLjY2NiAyNDIuNjg2IDkzLjgxIDI1NiAxMjggMjU2YzM0LjE5IDAgNjYuMzM0LTEzLjMxNCA5MC41MS0zNy40OUMyNDIuNjg2IDE5NC4zMzQgMjU2IDE2Mi4xOSAyNTYgMTI4YzAtMzQuMTktMTMuMzE0LTY2LjMzNC0zNy40OS05MC41MUMxOTQuMzM0IDEzLjMxNCAxNjIuMTkgMCAxMjggMCIgZmlsbD0iI0ZGN0YwMCIvPjxwYXRoIGQ9Ik0yNDkuMzg2IDEyOGMwIDY3LjA0LTU0LjM0NyAxMjEuMzg2LTEyMS4zODYgMTIxLjM4NkM2MC45NiAyNDkuMzg2IDYuNjEzIDE5NS4wNCA2LjYxMyAxMjggNi42MTMgNjAuOTYgNjAuOTYgNi42MTQgMTI4IDYuNjE0YzY3LjA0IDAgMTIxLjM4NiA1NC4zNDYgMTIxLjM4NiAxMjEuMzg2IiBmaWxsPSIjRkZGIi8+PHBhdGggZD0iTTE2MC44NjkgNzQuMDYybDUuMTQ1LTE4LjUzN2M1LjI2NC0uNDcgOS4zOTItNC44ODYgOS4zOTItMTAuMjczIDAtNS43LTQuNjItMTAuMzItMTAuMzItMTAuMzJzLTEwLjMyIDQuNjItMTAuMzIgMTAuMzJjMCAzLjc1NSAyLjAxMyA3LjAzIDUuMDEgOC44MzdsLTUuMDUgMTguMTk1Yy0xNC40MzctMy42Ny0yNi42MjUtMy4zOS0yNi42MjUtMy4zOWwtMi4yNTggMS4wMXYxNDAuODcybDIuMjU4Ljc1M2MxMy42MTQgMCA3My4xNzctNDEuMTMzIDczLjMyMy04NS4yNyAwLTMxLjYyNC0yMS4wMjMtNDUuODI1LTQwLjU1NS01Mi4xOTd6TTE0Ni41MyAxNjQuOGMtMTEuNjE3LTE4LjU1Ny02LjcwNi02MS43NTEgMjMuNjQzLTY3LjkyNSA4LjMyLTEuMzMzIDE4LjUwOSA0LjEzNCAyMS41MSAxNi4yNzkgNy41ODIgMjUuNzY2LTM3LjAxNSA2MS44NDUtNDUuMTUzIDUxLjY0NnptMTguMjE2LTM5Ljc1MmE5LjM5OSA5LjM5OSAwIDAgMC05LjM5OSA5LjM5OSA5LjM5OSA5LjM5OSAwIDAgMCA5LjQgOS4zOTkgOS4zOTkgOS4zOTkgMCAwIDAgOS4zOTgtOS40IDkuMzk5IDkuMzk5IDAgMCAwLTkuMzk5LTkuMzk4em0yLjgxIDguNjcyYTIuMzc0IDIuMzc0IDAgMSAxIDAtNC43NDkgMi4zNzQgMi4zNzQgMCAwIDEgMCA0Ljc0OXoiIGZpbGw9IiNFNTcyMDAiLz48cGF0aCBkPSJNMTAxLjM3MSA3Mi43MDlsLTUuMDIzLTE4LjkwMWMyLjg3NC0xLjgzMiA0Ljc4Ni01LjA0IDQuNzg2LTguNzAxIDAtNS43LTQuNjItMTAuMzItMTAuMzItMTAuMzItNS42OTkgMC0xMC4zMTkgNC42Mi0xMC4zMTkgMTAuMzIgMCA1LjY4MiA0LjU5MiAxMC4yODkgMTAuMjY3IDEwLjMxN0w5NS44IDc0LjM3OGMtMTkuNjA5IDYuNTEtNDAuODg1IDIwLjc0Mi00MC44ODUgNTEuODguNDM2IDQ1LjAxIDU5LjU3MiA4NS4yNjcgNzMuMTg2IDg1LjI2N1Y2OC44OTJzLTEyLjI1Mi0uMDYyLTI2LjcyOSAzLjgxN3ptMTAuMzk1IDkyLjA5Yy04LjEzOCAxMC4yLTUyLjczNS0yNS44OC00NS4xNTQtNTEuNjQ1IDMuMDAyLTEyLjE0NSAxMy4xOS0xNy42MTIgMjEuNTExLTE2LjI4IDMwLjM1IDYuMTc1IDM1LjI2IDQ5LjM2OSAyMy42NDMgNjcuOTI2em0tMTguODItMzkuNDZhOS4zOTkgOS4zOTkgMCAwIDAtOS4zOTkgOS4zOTggOS4zOTkgOS4zOTkgMCAwIDAgOS40IDkuNCA5LjM5OSA5LjM5OSAwIDAgMCA5LjM5OC05LjQgOS4zOTkgOS4zOTkgMCAwIDAtOS4zOTktOS4zOTl6bS0yLjgxIDguNjcxYTIuMzc0IDIuMzc0IDAgMSAxIDAtNC43NDggMi4zNzQgMi4zNzQgMCAwIDEgMCA0Ljc0OHoiIGZpbGw9IiNGRjdGMDAiLz48L3N2Zz4=)
+
+[![platformio-build](https://github.com/bts-lasalle-avignon-ressources/PlatformIO/actions/workflows/build-platformio.yml/badge.svg)](https://github.com/bts-lasalle-avignon-ressources/PlatformIO/actions/workflows/build-platformio.yml) [![platformio-build-test](https://github.com/bts-lasalle-avignon-ressources/PlatformIO/actions/workflows/build-platformio-test.yml/badge.svg)](https://github.com/bts-lasalle-avignon-ressources/PlatformIO/actions/workflows/build-platformio-test.yml)
 
 # PlatformIO
 
@@ -47,8 +49,8 @@
     - [ESP-PROG](#esp-prog)
     - [USB OTG (ESP32-S3)](#usb-otg-esp32-s3)
   - [Tests unitaires (Unity)](#tests-unitaires-unity)
-  - [Test distant](#test-distant)
   - [Intégration continue (GitHub Actions)](#intégration-continue-github-actions)
+  - [Développement distant](#développement-distant)
   - [Auteurs](#auteurs)
 
 ---
@@ -611,6 +613,8 @@ Quelques caractéristiques :
 |Pont USB/UART|CP2102|
 
 ![](images/esp32-functional-block-diagram.png)
+
+> Sur ce module, la Led intégrée est sur la broche 1.
 
 ### Détection
 
@@ -2254,23 +2258,41 @@ Lien : https://docs.platformio.org/en/stable/plus/debugging.html
 
 Un débogueur (ou débugueur, de l’anglais _debugger_) est un logiciel qui aide un développeur à analyser les _bugs_ d’un programme.
 
-Pour cela, il permet d’exécuter le programme pas-à-pas, d’afﬁcher la valeur des
-variables à tout moment, de mettre en place des points d’arrêt sur des conditions ou
+Pour cela, il permet d’exécuter le programme pas-à-pas, d’afﬁcher la valeur des variables à tout moment, de mettre en place des points d’arrêt sur des conditions ou
 sur des lignes du programme ...
 
-Le programme à débuguer est exécuté à travers le débogueur et s’exécute
-normalement. Le débogueur offre alors au programmeur la possibilité d’observer et
-de contrôler l’exécution du programme.
+Le programme à débuguer est exécuté à travers le débogueur et s’exécute normalement. Le débogueur offre alors au programmeur la possibilité d’observer et de contrôler l’exécution du programme.
 
-[GNU Debugger](https://www.gnu.org/software/gdb/), également appelé `gdb`, est le débogueur standard du projet GNU. Il
-est portable sur de nombreux systèmes type Unix et fonctionne pour plusieurs
-langages de programmation, comme le C et le C++. Il fut écrit par Richard Stallman
-en 1988. `gdb` est un logiciel libre, distribué sous la licence GNU GPL.
+[GNU Debugger](https://www.gnu.org/software/gdb/), également appelé `gdb`, est le débogueur standard du projet GNU. Il est portable sur de nombreux systèmes type Unix et fonctionne pour plusieurs langages de programmation, comme le C et le C++. Il fut écrit par Richard Stallman en 1988. `gdb` est un logiciel libre, distribué sous la licence GNU GPL.
 
-L’interface de `gdb` est une simple ligne de commande, mais il est souvent invoqué en
-arrière-plan par les environnements de développement intégré.
+L’interface de `gdb` est une simple ligne de commande, mais il est souvent invoqué en arrière-plan par les environnements de développement intégré.
 
 Lien : https://www.gnu.org/software/gdb/
+
+> [!WARNING]
+> Suivant la version de GDB utilisé dans la _toolchain_ fourni par Espressif, il peut être nécessaire d'installer la dépendance vers le paquet `libpython2.7` :
+> ```sh
+> $ ldd ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gdb
+> 	linux-vdso.so.1 (0x00007ffefcbb7000)
+> 	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007ebf7e7c0000)
+> 	libpython2.7.so.1.0 => /lib/x86_64-linux-gnu/libpython2.7.so.1.0 (0x00007ebf7e400000)
+> 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007ebf7e7bb000)
+> 	libutil.so.1 => /lib/x86_64-linux-gnu/libutil.so.1 (0x00007ebf7e7b6000)
+> 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007ebf7e319000)
+> 	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007ebf7e000000)
+> 	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007ebf7e794000)
+> 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ebf7dc00000)
+> 	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007ebf7e778000)
+> 	/lib64/ld-linux-x86-64.so.2 (0x00007ebf7e7f3000)
+> ```
+> 
+> Si besoin :
+> 
+> ```sh
+> $ sudo apt install python2.7
+> ```
+>
+> Voir aussi : https://registry.platformio.org/tools/espressif/tool-xtensa-esp-elf-gdb
 
 ### JTAG
 
@@ -2933,6 +2955,8 @@ Les tests unitaires sont supportés par [PlatformIO](https://platformio.org/) av
 - [Unity Assertions Reference](https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityAssertionsReference.md)
 - [Assertions CheatSheet (PDF)](https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityAssertionsCheatSheetSuitableforPrintingandPossiblyFraming.pdf)
 
+> Exemple de classe à tester unitairement : la classe [Led](src/arduino-esp32-tests/lib/led/)
+
 Les tests peuvent être réalisés :
 
 - en local (on utilise alors la plateforme `native`)
@@ -2940,15 +2964,15 @@ Les tests peuvent être réalisés :
 ```ini
 [env:native]
 platform = native
-test_filter = test_point
+test_filter = test_native
 ```
 
-Les tests unitaires sont placés dans le répertoire `test`. Ici, dans `test/test_point/` :
+Les tests unitaires sont placés dans le répertoire `test`. Ici, dans `test/test_native/` :
 
 ```cpp
 #include <unity.h>
 
-#include "Point.h" // La classe Point
+#include "led.h" // La classe Led
 
 void setUp(void)
 {
@@ -2960,110 +2984,87 @@ void tearDown(void)
     // clean stuff up here
 }
 
-// "Q1 : Constructeur par défaut"
-void test_unitaire_q1()
+// Constructeur par défaut
+void test_unitaire_constructeur_defaut_led()
 {
-    Point p0;
+    Led led;
 
-    TEST_ASSERT_EQUAL_FLOAT(p0.getX(), 0.);
-    TEST_ASSERT_EQUAL_FLOAT(p0.getY(), 0.);
+    led.begin();
+    TEST_ASSERT_EQUAL_INT8(led.getPin(), LED_BUILTIN);
+    TEST_ASSERT_EQUAL_INT(led.getState(), LED_OFF);
 }
 
-// "Q2 : Constructeur d'initialisation"
-void test_unitaire_q2()
+// Constructeur d'initialisation"
+void test_unitaire_constructeur_led()
 {
-    Point p1(1., 2.);
-    Point p2(4., 0.);
+    Led led(16);
 
-    TEST_ASSERT_EQUAL_FLOAT(p1.getX(), 1.);
-    TEST_ASSERT_EQUAL_FLOAT(p1.getY(), 2.);
-    TEST_ASSERT_EQUAL_FLOAT(p2.getX(), 4.);
-    TEST_ASSERT_EQUAL_FLOAT(p2.getY(), 0.);
+    led.begin();
+    TEST_ASSERT_EQUAL_INT8(led.getPin(), 16);
+    TEST_ASSERT_EQUAL_INT(led.getState(), LED_OFF);
 }
 
-// ...
-
-// "Qx : Affiche les coordonnées d'un point"
-/*
-void test_unitaire_qx()
+void test_unitaire_led_on()
 {
-    Point p0;
+    Led led(16);
 
-    p0.affiche(); // la méthode existe
-    TEST_IGNORE();
+    led.on();
+    led.readState();
+    TEST_ASSERT_EQUAL_INT(led.getState(), LED_ON);
 }
-*/
+
+void test_unitaire_led_off()
+{
+    Led led(16);
+
+    led.off();
+    led.readState();
+    TEST_ASSERT_EQUAL_INT(led.getState(), LED_OFF);
+}
 
 int main()
 {
     UNITY_BEGIN(); // IMPORTANT LINE!
-    RUN_TEST(test_unitaire_q1);
-    RUN_TEST(test_unitaire_q2);
-    // ...
+    RUN_TEST(test_unitaire_constructeur_defaut_led);
+    RUN_TEST(test_unitaire_constructeur_led);
+    RUN_TEST(test_unitaire_led_on);
+    RUN_TEST(test_unitaire_led_off);
     return UNITY_END(); // stop unit testing
 }
 ```
 
-Tests unitaires pour les questions Q1, Q2, ... :
+Tests unitaires :
 
 ```cpp
 $ pio test -e native
 Verbosity level can be increased via `-v, -vv, or -vvv` option
-Collected 8 tests
+Collected 2 tests
 
-Processing test_point in native environment
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Processing test_native in native environment
+
 Building...
 Testing...
-test/test_point/test_point_main.cpp:80: test_unitaire_q1        [PASSED]
-test/test_point/test_point_main.cpp:81: test_unitaire_q2        [PASSED]
-test/test_point/test_point_main.cpp:82: test_unitaire_q3        [PASSED]
-test/test_point/test_point_main.cpp:53: test_unitaire_q4        [SKIPPED]
-test/test_point/test_point_main.cpp:84: test_unitaire_q5        [PASSED]
-test/test_point/test_point_main.cpp:85: test_unitaire_q6        [PASSED]
----------------------------------------------------------------------------------------------- native:test_point [PASSED] Took 0.68 seconds ----------------------------------------------------------------------------------------------
+test/test_native/test_native_main.cpp:46: test_unitaire_constructeur_led	[PASSED]
+test/test_native/test_native_main.cpp:47: test_unitaire_led_on	[PASSED]
+test/test_native/test_native_main.cpp:48: test_unitaire_led_off	[PASSED]
+native:test_native [PASSED] Took 0.32 seconds
 
-================================================================================================================ SUMMARY ================================================================================================================
-Environment    Test        Status    Duration
--------------  ----------  --------  ------------
-native         test_point  PASSED    00:00:00.676
-========================================================================================== 6 test cases: 1 skipped, 5 succeeded in 00:00:00.676 ==========================================================================================
-```
-
-Test unitaire pour une question Q _n_ :
-
-```cpp
-$ pio test -e q1
-Verbosity level can be increased via `-v, -vv, or -vvv` option
-Collected 8 tests
-
-Processing test_point_q1 in q1 environment
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Building...
-Testing...
-test/test_point_q1/test_point_main.cpp:27: test_unitaire_q1     [PASSED]
----------------------------------------------------------------------------------------------- q1:test_point_q1 [PASSED] Took 0.28 seconds ----------------------------------------------------------------------------------------------
-
-================================================================================================================ SUMMARY ================================================================================================================
-Environment    Test           Status    Duration
--------------  -------------  --------  ------------
-q1             test_point_q1  PASSED    00:00:00.282
-=============================================================================================== 1 test cases: 1 succeeded in 00:00:00.282 ===============================================================================================
+SUMMARY
+Environment    Test         Status    Duration
+-------------  -----------  --------  ------------
+native         test_native  PASSED    00:00:00.322
+3 test cases: 3 succeeded in 00:00:00.322
 ```
 
 - en embarqué (ici, on utilise un ESP32 avec le _framework_ Arduino)
 
 ```ini
-[env:lolin32]
+[env:esp32_test]
 platform = espressif32
 board = lolin32
 framework = arduino
-lib_deps =
-test_filter = test_point_esp32
-upload_port = /dev/ttyUSB0
-upload_speed = 115200
-monitor_port = /dev/ttyUSB0
-monitor_speed = 115200
+build_flags = -DDEBUG -D$PIOENV
+test_filter = test_esp32
 ```
 
 Les tests unitaires sont placés dans le répertoire `test`. Ici, dans `test/test_point_esp32/` :
@@ -3072,47 +3073,16 @@ Les tests unitaires sont placés dans le répertoire `test`. Ici, dans `test/tes
 #include <Arduino.h>
 #include <unity.h>
 
-#include "Point.h" // La classe Point
+#include "led.h" // La classe Led
 
-void setUp(void)
-{
-    // set stuff up here
-}
-
-void tearDown(void)
-{
-    // clean stuff up here
-}
-
-// "Q1 : Constructeur par défaut"
-void test_unitaire_q1()
-{
-    Point p0;
-
-    TEST_ASSERT_EQUAL_FLOAT(p0.getX(), 0.);
-    TEST_ASSERT_EQUAL_FLOAT(p0.getY(), 0.);
-}
-
-// "Q2 : Constructeur d'initialisation"
-void test_unitaire_q2()
-{
-    Point p1(1., 2.);
-    Point p2(4., 0.);
-
-    TEST_ASSERT_EQUAL_FLOAT(p1.getX(), 1.);
-    TEST_ASSERT_EQUAL_FLOAT(p1.getY(), 2.);
-    TEST_ASSERT_EQUAL_FLOAT(p2.getX(), 4.);
-    TEST_ASSERT_EQUAL_FLOAT(p2.getY(), 0.);
-}
-
-// ...
+// idem ...
 
 void setup()
 {
     UNITY_BEGIN(); // IMPORTANT LINE!
-    RUN_TEST(test_unitaire_q1);
-    RUN_TEST(test_unitaire_q2);
-    // ...
+    RUN_TEST(test_unitaire_constructeur_led);
+    RUN_TEST(test_unitaire_led_on);
+    RUN_TEST(test_unitaire_led_off);
     UNITY_END(); // stop unit testing
 }
 
@@ -3121,41 +3091,51 @@ void loop()
 }
 ```
 
-Tests unitaires pour les questions Q1, Q2, ... sur un **ESP32** :
+Tests unitaires sur un **ESP32** :
 
 ```cpp
-$ pio test -e lolin32
-Verbosity level can be increased via `-v, -vv, or -vvv` option
-Collected 8 tests
+$ pio test -e esp32_test -v
+Collected 2 tests (test_esp32, test_native)
 
-Processing test_point_esp32 in lolin32 environment
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Processing test_esp32 in esp32_test environment
+
 Building & Uploading...
+
 Testing...
 If you don't see any output for the first 10 secs, please reset board (press reset button)
 
-test/test_point_esp32/test_point_main.cpp:81: test_unitaire_q1  [PASSED]
-test/test_point_esp32/test_point_main.cpp:82: test_unitaire_q2  [PASSED]
-test/test_point_esp32/test_point_main.cpp:83: test_unitaire_q3  [PASSED]
-test/test_point_esp32/test_point_main.cpp:54: test_unitaire_q4  [SKIPPED]
-test/test_point_esp32/test_point_main.cpp:85: test_unitaire_q5  [PASSED]
-test/test_point_esp32/test_point_main.cpp:86: test_unitaire_q6  [PASSED]
------------------------------------------------------------------------------------------- lolin32:test_point_esp32 [PASSED] Took 31.35 seconds ------------------------------------------------------------------------------------------
+ets Jun  8 2016 00:22:57
 
-================================================================================================================ SUMMARY ================================================================================================================
-Environment    Test              Status    Duration
--------------  ----------------  --------  ------------
-lolin32        test_point_esp32  PASSED    00:00:31.347
-========================================================================================== 6 test cases: 1 skipped, 5 succeeded in 00:00:31.347 ==========================================================================================
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+test/test_esp32/test_esp32_main.cpp:47:test_unitaire_constructeur_led:PASS
+test/test_esp32/test_esp32_main.cpp:48:test_unitaire_led_on:PASS
+test/test_esp32/test_esp32_main.cpp:49:test_unitaire_led_off:PASS
+
+-----------------------
+3 Tests 0 Failures 0 Ignored 
+
+esp32_test:test_esp32 [PASSED] Took 7.63 seconds
+
+SUMMARY
+Environment    Test         Status    Duration
+-------------  -----------  --------  ------------
+native         test_esp32   SKIPPED
+native         test_native  SKIPPED
+esp32_test     test_esp32   PASSED    00:00:07.625
+esp32_test     test_native  SKIPPED
+3 test cases: 3 succeeded in 00:00:07.625
 ```
 
-> Voir aussi avec Github Classroom : https://github.com/btssn-lasalle84/tp-poo-platformio
-
-## Test distant
-
-Lien : https://piolabs.com/blog/insights/unit-testing-part-3.html
-
-TODO
+> Voir aussi :
+> - [Github Classroom](https://github.com/btssn-lasalle84/tp-poo-platformio) (notation automatique)
+> - [Développement distant](#développement-distant) (test distant)
 
 ## Intégration continue (GitHub Actions)
 
@@ -3245,6 +3225,123 @@ Ce code est à placer dans le fichier `README.md` du dépôt (généralement au 
 ```markdown
 [![Build PlatformIO](https://github.com/<organisation>/<depot>/actions/workflows/build-platformio.yml/badge.svg)](https://github.com/<organisation>/<depot>/actions/workflows/build-platformio.yml)
 ```
+
+## Développement distant
+
+Lien : https://docs.platformio.org/en/latest/plus/pio-remote.html
+
+PlatformIO fournit une solution de développement distant permettant d'accéder à ses modules (filaires ou sans fils).
+
+PlatformIO CLI fournit la commande `pio remote` pour gérer les fonctionnalités de l'accès distant :
+
+```sh
+$ pio remote --help
+Usage: pio remote [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  -a, --agent TEXT
+  -h, --help        Show this message and exit.
+
+Commands:
+  agent   Start a new agent or list active
+  device  Monitor remote device or list existing
+  run     Process project environments remotely
+  test    Remote Unit Testing
+  update  Update installed Platforms, Packages and Libraries
+```
+
+Ce service permet notamment de :
+
+- lister ses appareils (filaires ou sans fils) `pio remote device list`
+- téléverser un _firmware_ `pio remote run`
+- effectuer des tests unitaires à distance `pio remote test`
+
+La communication est basée sur un agent à démarrer sur sa machine hôte :
+
+```sh
+$ pio remote agent start
+2024-07-10 15:39:05 [info] Name: sedatech
+2024-07-10 15:39:05 [info] Connecting to PlatformIO Remote Development Cloud
+2024-07-10 15:39:06 [info] Successfully connected
+2024-07-10 15:39:06 [info] Authenticating
+2024-07-10 15:39:06 [info] Successfully authorized
+```
+
+Le _broker_ **PIO Cloud** assure le lien entre l'**agent** (démarré sur la machine hôte) et le **client** (par exemple GitHub Actions ou un PC avec PlatformIO CLI `remote`).
+
+![](https://docs.platformio.org/en/latest/_images/pio-remote-architecture.png)
+
+On peut lister les appareils disponibles :
+
+```sh
+$ pio remote device list
+Agent sedatech
+==============
+/dev/ttyUSB0
+------------
+Hardware ID: USB VID:PID=10C4:EA60 SER=0001 LOCATION=1-6.3
+Description: CP2102 USB to UART Bridge Controller - CP2102 USB to UART Bridge Controller
+```
+
+Pour utiliser ce service, il faut disposer d'un compte sur PlatformIO :
+
+![](images/platformio-account.png)
+
+On peut s'authentifier avec son compte GitHub :
+
+![](images/platformio-login.png)
+
+![](images/platformio-github-permissions.png)
+
+Ensuite, il est possible de créer un _token_ (jeton d'authentification personnel) :
+
+![](images/platformio-token.png)
+
+Ce _token_ va servir pour la connexion automatique au compte PlatformIO. Cela sera utile pour le système d'intégration continue **GitHub Actions** en ajoutant un nouveau `secret` (`PLATFORMIO_AUTH_TOKEN`) au dépôt GitHub :
+
+![](images/platformio-github-secret.png)
+
+![](images/platformio-github-secret-ajout.png)
+
+![](images/platformio-github-secret-ajoute.png)
+
+Exécuter des tests distants :
+
+```sh
+$ pio remote test --environment esp32_test
+Building project locally
+Verbosity level can be increased via `-v, -vv, or -vvv` option
+Collected 2 tests
+
+Processing test_esp32 in esp32_test environment
+
+Building...
+esp32_test:test_esp32 [PASSED] Took 1.33 seconds
+
+0 test cases: 0 succeeded in 00:00:01.329
+Testing project remotely
+Verbosity level can be increased via `-v, -vv, or -vvv` option
+Collected 2 tests
+
+Processing test_esp32 in esp32_test environment
+
+Building & Uploading...
+Testing...
+If you don't see any output for the first 10 secs, please reset board (press reset button)
+
+test/test_esp32/test_esp32_main.cpp:47: test_unitaire_constructeur_led	[PASSED]
+test/test_esp32/test_esp32_main.cpp:48: test_unitaire_led_on	[PASSED]
+test/test_esp32/test_esp32_main.cpp:49: test_unitaire_led_off	[PASSED]
+esp32_test:test_esp32 [PASSED] Took 5.40 seconds
+
+SUMMARY
+Environment    Test        Status    Duration
+-------------  ----------  --------  ------------
+esp32_test     test_esp32  PASSED    00:00:05.397
+3 test cases: 3 succeeded in 00:00:05.397
+```
+
+Tutoriel : https://piolabs.com/blog/insights/unit-testing-part-3.html
 
 ## Auteurs
 
