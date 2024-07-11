@@ -3369,7 +3369,15 @@ jobs:
           cd src/arduino-esp32-tests && pio remote test -e esp32_test -v
 ```
 
-Tutoriel : https://piolabs.com/blog/insights/unit-testing-part-3.html
+On obtient :
+
+![](images/github-actions-build.png)
+
+Avec l'ajout de badges sur la page d'accueil du dépôt GitHub :
+
+![](images/github-badges.png)
+
+> Tutoriel : https://piolabs.com/blog/insights/unit-testing-part-3.html
 
 ## Auteurs
 
