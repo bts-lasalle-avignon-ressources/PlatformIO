@@ -2487,6 +2487,30 @@ En-têtes de programme :
 
 On retrouve logiquement les segments en lecture seule dans la mémoire _flash_ avec les sections `.flash.appdesc`, `.flash.rodata` (les constantes) et `.flash.text` (le code) et les segments de données avec les sections `.dram0.data` et `.dram0.bss` dans la RAM.
 
+Du code machine (ici en [assembleur](https://fr.wikipedia.org/wiki/Assembleur) du microprocesseur Xtensa LX6 32 bits):
+
+```sh
+$ ~/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-objdump -d .pio/build/esp32_release/firmware.elf
+...
+400d38b0 <app_main>:
+400d38b0:	006136        	entry	a1, 48
+400d38b3:	f25d81        	l32r	a8, 400d0228 <_stext+0x208> (3ffc1d4c <loopTaskWDTEnabled>)
+400d38b6:	00a092        	movi	a9, 0
+400d38b9:	004892        	s8i	a9, a8, 0
+400d38bc:	fece65        	call8	400d25a4 <initArduino>
+400d38bf:	fffea5        	call8	400d38a8 <_Z27getArduinoLoopTaskStackSizev>
+400d38c2:	1e0c      	    movi.n	a14, 1
+400d38c4:	0acd      	    mov.n	a12, a10
+400d38c6:	f25af1        	l32r	a15, 400d0230 <_stext+0x210> (3ffc1d50 <loopTaskHandle>)
+400d38c9:	f25ab1        	l32r	a11, 400d0234 <_stext+0x214> (3f400e19 <__FUNCTION__$9109+0xc>)
+400d38cc:	f25ba1        	l32r	a10, 400d0238 <_stext+0x218> (400d3884 <_Z8loopTaskPv>)
+400d38cf:	01e9      	    s32i.n	a14, a1, 0
+400d38d1:	0d0c      	    movi.n	a13, 0
+400d38d3:	fec865        	call8	400d2558 <xTaskCreateUniversal>
+400d38d6:	f01d      	    retw.n
+...
+```
+
 Le _firmware_ au format [ELF](https://fr.wikipedia.org/wiki/Executable_and_Linkable_Format) contient aussi tous les **symboles** (variables et fonctions) utilisés dans et par le programme.
 
 Quelques symboles du code source [main.cpp](src/arduino-esp32/src/main.cpp):
