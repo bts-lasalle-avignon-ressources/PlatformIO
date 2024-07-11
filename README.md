@@ -42,6 +42,10 @@
     - [Flash](#flash-1)
     - [Partitions](#partitions-1)
     - [Voir aussi](#voir-aussi)
+  - [Firmware](#firmware)
+    - [Format ELF](#format-elf)
+    - [Segments et sections](#segments-et-sections)
+    - [Project Inspect](#project-inspect)
   - [Débugueur](#débugueur)
     - [JTAG](#jtag)
     - [J-Link SEGGER](#j-link-segger)
@@ -1101,7 +1105,7 @@ $ ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-nm -s .pio/
 Ensuite, `xtensa-esp32-elf-g++` réalise l'édition de liens pour produire l'"exécutable" `firmware.elf`.
 
 > [!NOTE]
-> ELF (_Executable and Linkable Format_) est un format de fichier binaire utilisé pour l'enregistrement de code compilé. Il est par exemple utilisé dans la plupart des systèmes d'exploitation de type Unix comme GNU/Linux.
+> ELF (_Executable and Linkable Format_) est un format de fichier binaire utilisé pour l'enregistrement de code compilé. Il est par exemple utilisé dans la plupart des systèmes d'exploitation de type Unix comme GNU/Linux. Voir le chapitre [Firmware](#firmware).
 
 L'utilitaire `esptool.py` finalise le processus de fabrication en produisant le fichier `firmware.bin` à partir de `firmware.elf`. C'est le fichier `firmware.bin` qui sera "téléversé" (_upload_) vers l'ESP32.
 
@@ -1159,9 +1163,6 @@ MethodWrapper(["checkprogsize"], [".pio/build/lolin32/firmware.elf"])
 Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
 RAM:   [=         ]   6.8% (used 22424 bytes from 327680 bytes)
 Flash: [==        ]  20.3% (used 266513 bytes from 1310720 bytes)
-.pio/build/lolin32/firmware.elf  :
-section                                                                                size         addr
-.rtc.text                                                                                 0   1074528256
 ...
 <lambda>(["upload"], [".pio/build/lolin32/firmware.bin"])
 AVAILABLE: cmsis-dap, esp-bridge, esp-prog, espota, esptool, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa
@@ -2248,9 +2249,282 @@ L'ESP32 supporte trois systèmes de fichiers (pour les partitions de type `data`
 
 ### Voir aussi
 
-Il existe une extension pour VSCode :
+Il existe une extension [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) pour VSCode :
 
 ![](images/extension-esp-idf.png)
+
+## Firmware
+
+> [!NOTE]
+> Un [firmware](https://fr.wikipedia.org/wiki/Firmware) (ou micrologiciel, microprogramme, microcode, logiciel interne ou encore logiciel embarqué) est un programme intégré dans un matériel informatique, ici l'ESP32, pour qu'il puisse fonctionner.
+
+L'[édition des liens](https://fr.wikipedia.org/wiki/%C3%89dition_de_liens) (_linker_) a produit l'application embarquée sour la forme d'un _[firmware](https://fr.wikipedia.org/wiki/Firmware_ (micrologiciel) au format [ELF](https://fr.wikipedia.org/wiki/Executable_and_Linkable_Format) (_Executable and Linkable Format_).
+
+> [!NOTE]
+> **[ELF](https://fr.wikipedia.org/wiki/Executable_and_Linkable_Format)** (_Executable and Linkable Format_) est un format de **fichier binaire** utilisé pour l'enregistrement de **code compilé** (objets, exécutables, bibliothèques de fonctions). Aujourd'hui, ce format est utilisé dans la plupart des systèmes d'exploitation de type **Unix** (GNU/Linux, Solaris, IRIX, System V, BSD), à l'exception de Mac OS X. Les autres formats répandus sont **[PE](https://fr.wikipedia.org/wiki/Portable_Executable)** (_Portable Executable_) pour Windows et **Mach-O3** pour Mac OS X.
+
+Fabrication :
+
+```sh
+$ pio run -e esp32_release -v
+
+Processing esp32_release (build_flags: -D$PIOENV; platform: espressif32; board: esp32dev; framework: arduino; monitor_port: /dev/ttyUSB0; monitor_speed: 115200)
+
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32dev.html
+PLATFORM: Espressif 32 (6.7.0) > Espressif ESP32 Dev Module
+HARDWARE: ESP32 240MHz, 320KB RAM, 4MB Flash
+...
+Building in release mode
+...
+<lambda>(["checkprogsize"], [".pio/build/esp32_release/firmware.elf"])
+MethodWrapper(["checkprogsize"], [".pio/build/esp32_release/firmware.elf"])
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]   6.6% (used 21464 bytes from 327680 bytes)
+Flash: [==        ]  20.7% (used 271169 bytes from 1310720 bytes)
+.pio/build/esp32_release/firmware.elf  :
+section                                                                                size         addr
+.rtc.text                                                                                 0   1074528256
+.rtc.dummy                                                                                0   1073217536
+.rtc.force_fast                                                                           0   1073217536
+.rtc_noinit                                                                              16   1342177792
+.rtc.force_slow                                                                           0   1342177808
+.iram0.vectors                                                                         1027   1074266112
+.iram0.text                                                                           56823   1074267140
+.dram0.data                                                                           16544   1073470304
+.ext_ram_noinit                                                                           0   1065353216
+.noinit                                                                                   0   1073486848
+.ext_ram.bss                                                                              0   1065353216
+.dram0.bss                                                                             4920   1073486848
+.flash.appdesc                                                                          256   1061158944
+.flash.rodata                                                                         55140   1061159200
+.flash.rodata_noload                                                                      0   1061214340
+.flash.text                                                                          141635   1074593824
+.iram0.text_end                                                                           1   1074323963
+.iram0.data                                                                               0   1074323964
+.iram0.bss                                                                                0   1074323964
+.dram0.heap_start                                                                         0   1073491768
+...
+.comment                                                                                166            0
+...
+Total                                                                               6052983
+"/home/tv/.platformio/penv/bin/python" "/home/tv/.platformio/packages/tool-esptoolpy/esptool.py" --chip esp32 elf2image --flash_mode dio --flash_freq 40m --flash_size 4MB --elf-sha256-offset 0xb0 -o .pio/build/esp32_release/firmware.bin .pio/build/esp32_release/firmware.elf
+esptool.py v4.5.1
+Creating esp32 image...
+Merged 2 ELF sections
+Successfully created esp32 image.
+[SUCCESS] Took 4.81 seconds
+
+$ ls -lh .pio/build/esp32_release/firmware.elf 
+-rwxrwxr-x 1 tv tv 6,0M juil. 11 17:30 .pio/build/esp32_release/firmware.elf
+```
+
+### Format ELF
+
+```sh
+$ file .pio/build/esp32_release/firmware.elf
+.pio/build/esp32_release/firmware.elf: ELF 32-bit LSB executable, Tensilica Xtensa, version 1 (SYSV), statically linked, with debug_info, not stripped
+```
+
+Décomposition d'un fichier ELF :
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Elf-layout--en.svg/693px-Elf-layout--en.svg.png)
+
+> cf. le format ARM ELF : https://developer.arm.com/documentation/espc0003/1-0/?lang=en
+
+Contenu du _firmware_ au format ELF :
+
+```sh
+$ hexdump -C .pio/build/esp32_release/firmware.elf
+00000000  7f 45 4c 46 01 01 01 00  00 00 00 00 00 00 00 00  |.ELF............|
+00000010  02 00 5e 00 01 00 00 00  ac 29 08 40 34 00 00 00  |..^......).@4...|
+00000020  dc 64 5e 00 00 03 00 00  34 00 20 00 05 00 28 00  |.d^.....4. ...(.|
+00000030  62 00 61 00 01 00 00 00  20 10 00 00 20 00 40 3f  |b.a..... ... .@?|
+...
+
+$ xxd -b .pio/build/esp32_release/firmware.elf
+
+00000000: 01111111 01000101 01001100 01000110 00000001 00000001  .ELF..
+00000006: 00000001 00000000 00000000 00000000 00000000 00000000  ......
+0000000c: 00000000 00000000 00000000 00000000 00000010 00000000  ......
+00000012: 01011110 00000000 00000001 00000000 00000000 00000000  ^.....
+00000018: 10101100 00101001 00001000 01000000 00110100 00000000  .).@4.
+0000001e: 00000000 00000000 11011100 01100100 01011110 00000000  ...d^.
+00000024: 00000000 00000011 00000000 00000000 00110100 00000000  ....4.
+0000002a: 00100000 00000000 00000101 00000000 00101000 00000000   ...(.
+00000030: 01100010 00000000 01100001 00000000 00000001 00000000  b.a...
+...
+```
+
+La structure de l'en-tête ELF :
+
+```cpp
+#define EI_NIDENT 16
+typedef struct {
+    unsigned char e_ident[EI_NIDENT];
+    Elf32_Half e_type;
+    Elf32_Half e_machine;
+    Elf32_Word e_version;
+    Elf32_Addr e_entry;
+    Elf32_Off e_phoff;
+    Elf32_Off e_shoff;
+    Elf32_Word e_flags;
+    Elf32_Half e_ehsize;
+    Elf32_Half e_phentsize;
+    Elf32_Half e_phnum;
+    Elf32_Half e_shentsize;
+    Elf32_Half e_shnum;
+    Elf32_Half e_shstrndx;
+} Elf32_Ehdr;
+```
+
+Quelques valeurs décodées :
+
+| Indice |        Champ        |               Valeur                |     Signification     |
+| :----: | :-----------------: | :---------------------------------: | :-------------------: |
+|  0..3  | File identification | 01111111 01000101 01001100 01000110 |        `.ELF`         |
+|   4    |     File class      |              00000001               |        32 bits        |
+|   5    |    Data encoding    |              00000001               | LSB (_little endian_) |
+|  ...   |         ...         |                 ...                 |          ...          |
+
+C'est probablement plus simple d'utiliser un utilitaire (ici `xtensa-esp32-elf-readelf` pour un ESP32) : 
+
+```sh
+$ readelf -h .pio/build/esp32_release/firmware.elf 
+En-tête ELF:
+  Magique:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Classe:                            ELF32
+  Données:                           complément à 2, système à octets de poids faible d'abord (little endian)
+  Version:                           1 (actuelle)
+  OS/ABI:                            UNIX - System V
+  Version ABI:                       0
+  Type:                              EXEC (fichier exécutable)
+  Machine:                           Tensilica Xtensa Processor
+  Version:                           0x1
+  Adresse du point d'entrée:         0x400829ac
+  Début des en-têtes de programme :  52 (octets dans le fichier)
+  Début des en-têtes de section :    6186204 (octets dans le fichier)
+  Fanions:                           0x300
+  Taille de cet en-tête:             52 (octets)
+  Taille de l'en-tête du programme:  32 (octets)
+  Nombre d'en-tête du programme:     5
+  Taille des en-têtes de section:    40 (octets)
+  Nombre d'en-têtes de section:      98
+  Table d'index des chaînes d'en-tête de section: 97
+```
+
+### Segments et sections
+
+Un _firmware_ (un "exécutable" au sens large) sera chargé en mémoire pour ensuite s'exécuter par le CPU (ici l'ESP32).
+
+En informatique, la mémoire est segmentée par une [MMU](https://fr.wikipedia.org/wiki/Unit%C3%A9_de_gestion_de_m%C3%A9moire) (_Memory Management Unit_).
+
+La [MMU](https://fr.wikipedia.org/wiki/Unit%C3%A9_de_gestion_de_m%C3%A9moire) (_Memory Management Unit_) divise la mémoire physique (ici pour un ESP32) ou la mémoire virtuelle (dans le cas de la segmentation avec pagination utilisée dans les systèmes d'exploitation) en **segments** caractérisés par leur adresse de début et leur taille (décalage). 
+
+De manière très générale, il existe deux types de segment :
+
+- les segments de données (cf. sections `.data`, `.rodata`, `.bss`, ...)
+- le segment de code (cf. section `.text` en lecture seule) qui contient les instructions (en langage machine) à exécuter
+
+Un _firmware_ au format [ELF](https://fr.wikipedia.org/wiki/Executable_and_Linkable_Format) est décomposée en **sections** :
+
+> Il y aura donc une correspondance segments/sections.
+
+![](images/esp32-firmware-sections.png)
+
+> cf. https://piolabs.com/blog/insights/memory-analysis-part-1.html
+
+Pour les données, il y a différents types de segment :
+
+- le segment de données (section `.data`) qui contient les variables globales et statiques et qui sont initialisées
+- le segment de données BSS (section `.bss`) qui contient les variables globales et statiques et qui ne sont pas initialisées explicitement (elles seront alors initialisées à zéro)
+- le segment de données pour les constantes (section `.rodata` en lecture seule) numériques, chaînes, etc.
+- le tas (_heap_) pour les allocations dynamiques (avec `malloc` en C ou `new` en C++) et qui commence à la fin du segment BSS
+- la pile (_stack_) pour les appels de fonction et variables locales et qui augmente dans la direction opposée au tas
+
+> [!IMPORTANT]
+> Le tas (_heap_) et la pile (_stack_) se partagent (parfois dangeureusement) l'espace libre ! On peut comprendre ici une des raisons de l'utilisation des variables globales dans les programmes embarqués car elles se retouvent dans un segment défini à l'édition de liens contrairement aux allocations dynamiques qui sont réalisées à l'exécution dans un espace généralement limité.
+
+Ici pour un ESP32, on distinguera deux types de mémoire : la RAM (en lecture/écriture) et la mémoire _flash_ (en lecture seule).
+
+Extrait de la fabrication :
+
+```sh
+$ pio run -e esp32_release -v
+...
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]   6.6% (used 21464 bytes from 327680 bytes)
+Flash: [==        ]  20.7% (used 271169 bytes from 1310720 bytes)
+...
+```
+
+> Ici pour cet ESP32, on a donc 320 KB de RAM et 1,25 MB de mémoire _flash_ (avec ce [partitionnement](#partitions)).
+
+Afficher les sections/segments :
+
+```sh
+$ readelf --segments .pio/build/esp32_release/firmware.elf
+
+Type de fichier ELF est EXEC (fichier exécutable)
+Point d'entrée 0x400829ac
+Il y a 5 en-têtes de programme, débutant à l'adresse de décalage 52
+
+En-têtes de programme :
+  Type           Décalage Adr. vir.  Adr.phys.  T.Fich. T.Mém.  Fan Alignement
+  LOAD           0x001020 0x3f400020 0x3f400020 0x0d864 0x0d864 RW  0x1000
+  LOAD           0x00eb60 0x3ffbdb60 0x3ffbdb60 0x040a0 0x053d8 RW  0x1000
+  LOAD           0x013000 0x40080000 0x40080000 0x0e1fb 0x0e1fc RWE 0x1000
+  LOAD           0x022020 0x400d0020 0x400d0020 0x22943 0x22943 R E 0x1000
+  LOAD           0x000200 0x50000200 0x50000200 0x00000 0x00010 RW  0x1000
+
+ Correspondance section/segment :
+  Sections de segment...
+   00     .flash.appdesc .flash.rodata 
+   01     .dram0.data .dram0.bss 
+   02     .iram0.vectors .iram0.text .iram0.text_end 
+   03     .flash.text 
+   04     .rtc_noinit
+```
+
+On retrouve logiquement les segments en lecture seule dans la mémoire _flash_ avec les sections `.flash.appdesc`, `.flash.rodata` (les constantes) et `.flash.text` (le code) et les segments de données avec les sections `.dram0.data` et `.dram0.bss` dans la RAM.
+
+Le _firmware_ au format [ELF](https://fr.wikipedia.org/wiki/Executable_and_Linkable_Format) contient aussi tous les **symboles** (variables et fonctions) utilisés dans et par le programme.
+
+Quelques symboles du code source [main.cpp](src/arduino-esp32/src/main.cpp):
+
+```sh
+$ readelf -s .pio/build/esp32_release/firmware.elf | grep esp32Led
+  3502: 3ffbdb68     1 OBJECT  GLOBAL DEFAULT    8 esp32Led
+
+$ readelf -s .pio/build/esp32_release/firmware.elf | grep digitalWrite
+  2557: 400d2504    14 FUNC    WEAK   DEFAULT   16 digitalWrite
+
+$ readelf -s .pio/build/esp32_release/firmware.elf | grep esp_chip_info
+  2540: 400dda14   125 FUNC    GLOBAL DEFAULT   16 esp_chip_info
+```
+
+### Project Inspect
+
+PlatformIO fournit un outil **Inspect** (_Project Inspection_) qui permet d'analyser l'utilisation de la mémoire par un programme.
+
+On commence par choisir un projet PlatformIO :
+
+![](images/inspect.png)
+
+L'utilisation de la mémoire, de manière détaillée si besoin :
+
+![](images/inspect-statistics.png)
+
+> Ici, beaucoup d'affichage avec `Serial.print()` dans [main.cpp](src/arduino-esp32/src/main.cpp) génèrent l'utilisation de `vfprintf.c` et d'`uart.c`.
+
+Les sections :
+
+![](images/inspect-sections.png)
+
+Et avec l'explorer, le code source [main.cpp](src/arduino-esp32/src/main.cpp) (un programme de 555 octets !) :
+
+![](images/inspect-explorer.png)
+
+> cf. https://piolabs.com/blog/insights/memory-analysis-part-2.html
 
 ## Débugueur
 
