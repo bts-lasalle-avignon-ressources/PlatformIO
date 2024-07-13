@@ -42,6 +42,7 @@
     - [Flash](#flash-1)
     - [Partitions](#partitions-1)
     - [Voir aussi](#voir-aussi)
+  - [OTA](#ota)
   - [Firmware](#firmware)
     - [Format ELF](#format-elf)
     - [Segments et sections](#segments-et-sections)
@@ -420,16 +421,19 @@ void loop()
 $ pio run -v
 ```
 
-### Programmer le système embarqué (_upload_)
-
-```sh
-$ pio run -t upload -v
-```
-
 Les fichiers générés pendant la fabrication sont stockés dans un répertoire `.pio`.
 
 > [!IMPORTANT]
 > Ces fichiers ne doivent jamais être conservés dans un dépôt `git`.
+
+### Programmer le système embarqué (_upload_)
+
+```sh
+$ pio run --target upload -v
+```
+
+> [!NOTE]
+> On peut lister les cibles disponibles avec `pio run --list-targets`
 
 ### Nettoyer un projet
 
@@ -2252,6 +2256,164 @@ L'ESP32 supporte trois systèmes de fichiers (pour les partitions de type `data`
 Il existe une extension [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) pour VSCode :
 
 ![](images/extension-esp-idf.png)
+
+## OTA 
+
+[OTA](https://fr.wikipedia.org/wiki/Over-the-air_programming) (_Over The Air_) est un mécanisme de mise à jour du _firmware_ par transfert de données à distance (via WiFi, Bluetooth ou Ethernet).
+
+> [!NOTE]
+> [OTA](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html) nécessite de configurer les tables de partition avec au moins deux partitions d'emplacement d'application OTA (`ota_0` et `ota_1`) et une partition de données OTA (`otadata`).
+
+Le [partitionnement](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/partition-tables.html) de la mémoire flash a été défini (par défaut) par le fichier `default.csv` :
+
+```sh
+$ cat ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/default.csv
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x5000,
+otadata,  data, ota,     0xe000,  0x2000,
+app0,     app,  ota_0,   0x10000, 0x140000,
+app1,     app,  ota_1,   0x150000,0x140000,
+spiffs,   data, spiffs,  0x290000,0x160000,
+coredump, data, coredump,0x3F0000,0x10000,
+```
+
+> [!TIP]
+> Le _framework_ `espidf` fournit l'outil `~/.platformio/packages/framework-espidf/components/app_update/otatool.py` pour effectuer des opérations liées à la partition OTA.
+
+Liens :
+
+- https://docs.platformio.org/en/latest/platforms/espressif32.html#over-the-air-ota-update
+- https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html
+
+Le _framework_ `arduino` fournit l'outil `~/.platformio/packages/framework-arduinoespressif32/tools/espota.py` pour transmettre le _firmware_ au module esp32 par OTA.
+
+Il est possible d'assurer la prise en charge OTA via le fichier de configuration `platformio.ini` :
+
+```ini
+[env:esp32_ota]
+platform = espressif32
+board = esp32dev
+framework = arduino
+lib_deps =
+    https://github.com/tzapu/WiFiManager.git
+build_flags = -DDEBUG
+; OTA
+upload_protocol = espota
+upload_port = 192.168.1.37
+upload_flags =
+    --port=3232
+; cf. --host_port (si besoin pour parefeu)
+monitor_speed = 115200
+```
+
+À partir du code source de base [BasicOTA.ino](https://github.com/espressif/arduino-esp32/blob/master/libraries/ArduinoOTA/examples/BasicOTA/BasicOTA.ino), exemple de programme [src/arduino-esp32-ota/src/main.c](src/arduino-esp32-ota/src/main.cpp) :
+
+```cpp
+#include <Arduino.h>
+#include <WiFi.h>
+#include <WiFiManager.h>
+#include <ESPmDNS.h>
+#include <ArduinoOTA.h>
+
+// Configuration du WiFi avec WiFiManager
+WiFiManager wm;
+WiFiClient  espClient;
+
+uint8_t esp32Led = 1; // LED_BUILTIN
+
+void setup()
+{
+    Serial.begin(115200);
+
+    // Configuration du WiFi avec WiFiManager
+    WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
+    // reset settings - wipe credentials for testing
+    // wm.resetSettings();
+    wm.setTitle("Station de notifications lumineuses");
+    // wm.setDarkMode(true);
+    bool resultat = false;
+    resultat      = wm.autoConnect(); // auto generated AP name from chipid
+    if(!resultat)
+    {
+        Serial.println(F("Erreur de connexion !"));
+        // ESP.restart();
+    }
+    // fin de la configuration du WiFi avec WiFiManager
+
+    // Port par défaut : 3232
+    // ArduinoOTA.setPort(3232);
+
+    // Hostname par défaut : esp3232-[MAC]
+    // ArduinoOTA.setHostname("ESP32_F3AB6224");
+
+    // OTA
+    ArduinoOTA.begin();
+
+    pinMode(esp32Led, OUTPUT);
+#ifdef DEBUG
+    Serial.println("Setup done");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+#endif
+}
+
+void loop()
+{
+    ArduinoOTA.handle();
+#ifdef DEBUG
+    Serial.println("Start blink");
+#endif
+    // Hello world!, non blink!
+    digitalWrite(esp32Led, HIGH);
+    delay(1000);
+    digitalWrite(esp32Led, LOW);
+    delay(5000);
+}
+```
+
+> [!IMPORTANT]
+> Configurer l'accès WiFi avec `WiFiManager`
+
+Téléverser le _firmware_ par OTA :
+
+```sh
+$ pio run --target upload --environment esp32_ota
+...
+Checking size .pio/build/esp32_ota/firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [==        ]  15.1% (used 49612 bytes from 327680 bytes)
+Flash: [=======   ]  68.6% (used 899585 bytes from 1310720 bytes)
+Building .pio/build/esp32_ota/firmware.bin
+esptool.py v4.5.1
+Creating esp32 image...
+Merged 27 ELF sections
+Successfully created esp32 image.
+Configuring upload protocol...
+AVAILABLE: cmsis-dap, esp-bridge, esp-prog, espota, esptool, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa
+CURRENT: upload_protocol = espota
+Uploading .pio/build/esp32_ota/firmware.bin
+18:25:45 [DEBUG]: Options: {'esp_ip': '192.168.1.37', 'host_ip': '0.0.0.0', 'esp_port': 3232, 'host_port': 49899, 'auth': '', 'image': '.pio/build/esp32_ota/firmware.bin', 'spiffs': False, 'debug': True, 'progress': True, 'timeout': 10}
+18:25:45 [INFO]: Starting on 0.0.0.0:49899
+18:25:45 [INFO]: Upload size: 906160
+Sending invitation to 192.168.1.37 .
+18:25:59 [INFO]: Waiting for device...
+
+Uploading: [                                                            ] 0% 
+Uploading: [=                                                           ] 1% 
+Uploading: [=                                                           ] 2% 
+Uploading: [==                                                          ] 3% 
+Uploading: [==                                                          ] 3%
+...
+Uploading: [============================================================] 99% 
+Uploading: [============================================================] 100% Done...
+
+18:26:15 [INFO]: Waiting for result...
+18:26:16 [INFO]: Result: OK
+18:26:16 [INFO]: Success
+```
+
+> [!NOTE]
+> Il existe des bibliothèques qui assurent la prise en charge d'OTA, par exemple [AsyncElegantOTA](https://github.com/ayushsharma82/AsyncElegantOTA). Tutoriel : https://www.raspberryme.com/mises-a-jour-esp32-ota-over-the-air-asyncelegantota-vs-code/
 
 ## Firmware
 
