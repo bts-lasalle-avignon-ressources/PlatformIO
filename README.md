@@ -573,6 +573,8 @@ lib_deps =
   fastled/FastLED @ ^3.4.0
 ```
 
+L'option `lib_deps` est utilisée par le mécanisme [LDF](https://docs.platformio.org/en/latest/librarymanager/ldf.html) (_Library Dependency Finder_) de PlatformIO. [LDF](https://docs.platformio.org/en/latest/librarymanager/ldf.html) permet de déterminer les répertoires contenant des fichiers d'en-tête (_header_) nécessaires pour la compilation (l'option `-I` des compilateurs C/C++). [LDF](https://docs.platformio.org/en/latest/librarymanager/ldf.html) fournit plusieurs options comme [lib_ldf_mode](https://docs.platformio.org/en/latest/projectconf/sections/env/options/library/lib_ldf_mode.html) qui permet de spécifier comment les dépendances doivent être analysées (`chain` ou `deep`).
+
 > [!NOTE]
 > Il est possible de créer ses propres bibliothèques à l’intérieur du projet dans le dossier `lib`. Le principe est de créer un sous-répertoire qui porte le même nom que le nom des fichiers sources (`.h` et `.cpp`).
 >
@@ -583,7 +585,7 @@ lib_deps =
 > build_flags = -I./include
 > ```
 
-Il est aussi poussible de distribuer des bibliothèques pour les partager avec la communauté.
+Il est aussi possible de distribuer des bibliothèques pour les partager avec la communauté.
 
 Il faut deux conditions pour enregistrer sa bibliothèque dans [PlatformIO](https://platformio.org/lib) :
 
@@ -2412,8 +2414,15 @@ Uploading: [============================================================] 100% D
 18:26:16 [INFO]: Success
 ```
 
+La bibliothèque ArduinoOTA permet une authentification par mot de passe en utilisant `setPassword()` ou `setPasswordHash()` (le mot de passe est alors défini avec sa valeur hashée en [MD5](https://fr.wikipedia.org/wiki/MD5)).
+
 > [!NOTE]
-> Il existe des bibliothèques qui assurent la prise en charge d'OTA, par exemple [AsyncElegantOTA](https://github.com/ayushsharma82/AsyncElegantOTA). Tutoriel : https://www.raspberryme.com/mises-a-jour-esp32-ota-over-the-air-asyncelegantota-vs-code/
+> Il existe d'autres bibliothèques qui assurent la prise en charge d'OTA, par exemple [ElegantOTA](https://github.com/ayushsharma82/ElegantOTA).
+
+Mais la bibliothèque ArduinoOTA ne permet pas de gérer des [certificats](https://fr.wikipedia.org/wiki/Certificat_%C3%A9lectronique) [TLS/SSL](https://fr.wikipedia.org/wiki/Transport_Layer_Security)
+
+> [!NOTE]
+> Il existe des bibliothèques qui assurent la prise en charge d'OTA avec le support de certificats, par exemple [esp32FOTA](https://github.com/chrisjoyce911/esp32FOTA). Tutoriel : https://mischianti.org/esp32-ota-update-with-web-browser-upload-in-https-ssl-tls-with-self-signed-certificate-2/
 
 ## Firmware
 
