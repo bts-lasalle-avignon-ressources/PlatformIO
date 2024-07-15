@@ -3848,7 +3848,7 @@ Avec l'ajout de badges sur la page d'accueil du dépôt GitHub :
 
 ![](images/github-badges.png)
 
-> Tutoriel : https://piolabs.com/blog/insights/unit-testing-part-3.html
+> cf. Tutoriel : https://piolabs.com/blog/insights/unit-testing-part-3.html
 
 ## Auteurs
 
