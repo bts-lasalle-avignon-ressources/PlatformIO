@@ -62,7 +62,7 @@
 
 ## Présentation
 
-[**PlatformIO**](https://platformio.org/) est un écosystème _open source_ dédié au développement IoT qui va faciliter le développement embarqué professionnel.
+**[PlatformIO](https://platformio.org/)** est un écosystème _open source_ dédié au développement [IoT](https://fr.wikipedia.org/wiki/Internet_des_objets) qui va faciliter le développement embarqué professionnel.
 
 > [!NOTE]
 > En juin 20204, il prend en charge plus de 1500 cartes de développement des principaux micro-contrôleurs (Atmel, ESP8266 et ESP32, STM32, etc ...), 40 plateformes et plus de 20 _frameworks_ regroupant plus de 130000 bibliothèques.
@@ -78,7 +78,7 @@ Documentations :
 
 ## PlatformIO IDE
 
-[__PlatformIO IDE__](https://platformio.org/platformio-ide) est l'environnement de développement C/C++ pour les systèmes embarqués supportés. Il est multi-plateformes (Windows, Mac et GNU/Linux) et il fournit une [extension](https://platformio.org/install/ide?install=vscode) à [VSCode](https://code.visualstudio.com/).
+[PlatformIO IDE](https://platformio.org/platformio-ide) est l'environnement de développement C/C++ pour les systèmes embarqués supportés. Il est multi-plateformes (Windows, Mac et GNU/Linux) et il fournit une [extension](https://platformio.org/install/ide?install=vscode) à [VSCode](https://code.visualstudio.com/).
 
 > [!NOTE]
 > [VSCode](https://code.visualstudio.com/) (ou [Visual Studio Code](https://code.visualstudio.com/)) est un éditeur de code source extensible et disponible pour Windows, macOS et Linux.
@@ -166,11 +166,13 @@ Le code source de l'application se situe dans le dossier `src` avec le fichier `
 ```cpp
 #include <Arduino.h>
 
-void setup() {
+void setup()
+{
   // put your setup code here, to run once:
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly:
 }
 ```
